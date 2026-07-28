@@ -1,0 +1,45 @@
+
+.chart-container {
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.chart-wrapper {
+  flex: 1;
+  min-height: 250px;
+}
+
+.uptime-container {
+  justify-content: center;
+  align-items: center;
+}
+
+.uptime-value {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px currentColor;
+}
+
+.uptime-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.uptime-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease-in-out;
+}

@@ -1,0 +1,23 @@
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.loader-container.full-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-primary);
+  z-index: 9999;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(124, 58, 237, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--color-accent);
+  animation: spin 1s ease-in-out infinite;
+}

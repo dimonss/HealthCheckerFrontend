@@ -1,0 +1,75 @@
+
+.endpoint-card {
+  padding: 20px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.endpoint-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.ec-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ec-title h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ec-url {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.ec-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.ec-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ec-method {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: rgba(124, 58, 237, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.ec-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.ec-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon-danger:hover {
+  color: var(--color-down) !important;
+  background: rgba(255, 71, 87, 0.1) !important;
+}

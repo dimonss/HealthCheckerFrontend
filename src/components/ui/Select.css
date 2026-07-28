@@ -1,0 +1,33 @@
+
+.select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.select-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.select-field {
+  padding: 10px 14px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select-field option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.select-field:focus {
+  border-color: var(--color-accent);
+}

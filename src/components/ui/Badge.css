@@ -1,0 +1,25 @@
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  text-transform: uppercase;
+}
+
+.badge-up {
+  background: rgba(0, 214, 143, 0.15);
+  color: var(--color-up);
+}
+
+.badge-down {
+  background: rgba(255, 71, 87, 0.15);
+  color: var(--color-down);
+}
+
+.badge-neutral {
+  background: rgba(74, 144, 217, 0.15);
+  color: var(--color-neutral);
+}
