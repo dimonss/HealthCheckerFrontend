@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { getEndpoints, createEndpoint, deleteEndpoint, checkEndpoint, Endpoint, CreateEndpointData } from '../../api/endpoints';
-import { getChecksSummary, ChecksSummary } from '../../api/checks';
+import { getEndpoints, createEndpoint, deleteEndpoint, checkEndpoint, type Endpoint, type CreateEndpointData } from '../../api/endpoints';
+import { getChecksSummary, type ChecksSummary } from '../../api/checks';
 import { EndpointList } from '../../components/endpoints/EndpointList';
 import { EndpointForm } from '../../components/endpoints/EndpointForm';
 import { Modal } from '../../components/ui/Modal';

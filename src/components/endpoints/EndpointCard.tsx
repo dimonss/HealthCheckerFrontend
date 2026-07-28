@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Play, Activity, Clock, Trash2 } from 'lucide-react';
-import { Endpoint } from '../../api/endpoints';
+import type { Endpoint } from '../../api/endpoints';
 import { StatusBadge } from './StatusBadge';
 import { Button } from '../ui/Button';
 import './EndpointCard.css';

@@ -1,4 +1,4 @@
-import { Endpoint } from '../../api/endpoints';
+import type { Endpoint } from '../../api/endpoints';
 import { EndpointCard } from './EndpointCard';
 import './EndpointList.css';
 

@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "tunnel": "ssh -N -R 8090:127.0.0.1:8090 root@your-server.com"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -18,9 +19,11 @@
     "recharts": "^2.15.0"
   },
   "devDependencies": {
+    "@types/node": "^22.5.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "oxlint": "^1.71.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.7"
   }

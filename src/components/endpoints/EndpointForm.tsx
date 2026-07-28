@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
-import { CreateEndpointData } from '../../api/endpoints';
+import type { CreateEndpointData } from '../../api/endpoints';
 import './EndpointForm.css';
 
 interface Props {

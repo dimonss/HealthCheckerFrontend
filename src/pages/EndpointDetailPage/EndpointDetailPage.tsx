@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCheckHistory, getCheckStats, Check, CheckStats } from '../../api/checks';
-import { getEndpoints, checkEndpoint, Endpoint } from '../../api/endpoints';
+import { getCheckHistory, getCheckStats, type Check, type CheckStats } from '../../api/checks';
+import { getEndpoints, checkEndpoint, type Endpoint } from '../../api/endpoints';
 import { ResponseTimeChart } from '../../components/charts/ResponseTimeChart';
 import { UptimeChart } from '../../components/charts/UptimeChart';
 import { Badge } from '../../components/ui/Badge';
