@@ -72,7 +72,7 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--hover-bg);
   color: var(--text-primary);
   border-color: var(--glass-border-hover);
 }

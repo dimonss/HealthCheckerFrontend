@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
+import { ThemeSwitcher } from '../../components/ui/ThemeSwitcher';
 import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 import { useTelegramAuth } from '../../hooks/useTelegramAuth';
 import { loginGoogle, loginTelegram } from '../../api/auth';
@@ -36,7 +37,8 @@ export const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <div className="login-lang-switcher">
+      <div className="login-top-controls">
+        <ThemeSwitcher />
         <LanguageSwitcher />
       </div>
 
@@ -60,4 +62,3 @@ export const LoginPage = () => {
     </div>
   );
 };
-

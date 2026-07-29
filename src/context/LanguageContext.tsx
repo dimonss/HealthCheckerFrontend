@@ -89,6 +89,11 @@ export const translations = {
     undo: 'Отменить',
     close: 'Закрыть',
     secUnit: 'с',
+
+    // Theme
+    themeDark: 'Тёмная',
+    themeLight: 'Светлая',
+    themeSystem: 'Устройство',
   },
   en: {
     // Auth & Login
@@ -176,6 +181,11 @@ export const translations = {
     undo: 'Undo',
     close: 'Close',
     secUnit: 's',
+
+    // Theme
+    themeDark: 'Dark',
+    themeLight: 'Light',
+    themeSystem: 'System',
   }
 };
 

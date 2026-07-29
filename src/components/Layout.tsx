@@ -3,6 +3,7 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from './ui/LanguageSwitcher';
+import { ThemeSwitcher } from './ui/ThemeSwitcher';
 import { Activity, LogOut, LayoutDashboard } from 'lucide-react';
 import './Layout.css';
 
@@ -58,7 +59,10 @@ export const Layout = () => {
       <main className="main-content">
         <header className="header glass">
           <h2>{t('monitoring')}</h2>
-          <LanguageSwitcher />
+          <div className="header-controls">
+            <ThemeSwitcher />
+            <LanguageSwitcher />
+          </div>
         </header>
         <div className="page-content">
           <Outlet />
@@ -67,4 +71,3 @@ export const Layout = () => {
     </div>
   );
 };
-
