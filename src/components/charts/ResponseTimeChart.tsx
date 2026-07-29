@@ -1,16 +1,84 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './Charts.css';
 
-interface DataPoint {
-  time: string;
+export interface DataPoint {
+  timestamp: number;
   value: number;
 }
 
-export const ResponseTimeChart = ({ data }: { data: DataPoint[] }) => {
+export type TimePeriod = '1h' | '24h' | '7d' | '30d';
+
+interface ResponseTimeChartProps {
+  data: DataPoint[];
+  period?: TimePeriod;
+  onPeriodChange?: (period: TimePeriod) => void;
+  loading?: boolean;
+}
+
+const PERIOD_OPTIONS: { value: TimePeriod; label: string }[] = [
+  { value: '1h', label: '1 час' },
+  { value: '24h', label: '24 часа' },
+  { value: '7d', label: '7 дней' },
+  { value: '30d', label: '30 дней' },
+];
+
+const formatXAxisTick = (ts: number, period: TimePeriod) => {
+  if (!ts) return '';
+  const d = new Date(ts);
+  if (period === '7d' || period === '30d') {
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}.${month}`;
+  }
+  return d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatTooltipLabel = (ts: number) => {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const day = d.getDate().toString().padStart(2, '0');
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const time = d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  return `${day}.${month} ${time}`;
+};
+
+export const ResponseTimeChart = ({
+  data,
+  period = '24h',
+  onPeriodChange,
+  loading = false,
+}: ResponseTimeChartProps) => {
+  const now = Date.now();
+  let periodMs = 24 * 60 * 60 * 1000;
+  if (period === '1h') periodMs = 60 * 60 * 1000;
+  else if (period === '24h') periodMs = 24 * 60 * 60 * 1000;
+  else if (period === '7d') periodMs = 7 * 24 * 60 * 60 * 1000;
+  else if (period === '30d') periodMs = 30 * 24 * 60 * 60 * 1000;
+
+  const startTime = now - periodMs;
+  const endTime = now;
+
   return (
     <div className="chart-container glass">
-      <h3>Время ответа (мс)</h3>
-      <div className="chart-wrapper">
+      <div className="chart-header">
+        <h3>Время ответа (мс)</h3>
+        {onPeriodChange && (
+          <div className="chart-interval-pills">
+            {PERIOD_OPTIONS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                className={`chart-pill ${period === item.value ? 'active' : ''}`}
+                onClick={() => onPeriodChange(item.value)}
+                disabled={loading}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className={`chart-wrapper ${loading ? 'chart-loading' : ''}`}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
@@ -20,9 +88,21 @@ export const ResponseTimeChart = ({ data }: { data: DataPoint[] }) => {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
-            <XAxis dataKey="time" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="timestamp"
+              type="number"
+              scale="time"
+              domain={[startTime, endTime]}
+              tickFormatter={(ts) => formatXAxisTick(ts, period)}
+              stroke="var(--text-muted)"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+            />
             <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip 
+            <Tooltip
+              labelFormatter={formatTooltipLabel}
+              formatter={(val: number) => [`${val} мс`, 'Время ответа']}
               contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}
               itemStyle={{ color: 'var(--color-up)' }}
             />

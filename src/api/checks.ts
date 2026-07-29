@@ -25,8 +25,16 @@ export interface ChecksSummary {
   unknown: number;
 }
 
-export const getCheckHistory = async (endpointId: string, limit = 50, offset = 0): Promise<Check[]> => {
-  const res = await apiClient.get(`/checks/endpoint/${endpointId}/history`, { params: { limit, offset } });
+export const getCheckHistory = async (
+  endpointId: string,
+  limit = 50,
+  offset = 0,
+  period?: string,
+  since?: string
+): Promise<Check[]> => {
+  const res = await apiClient.get(`/checks/endpoint/${endpointId}/history`, {
+    params: { limit, offset, period, since }
+  });
   return res.data;
 };
 

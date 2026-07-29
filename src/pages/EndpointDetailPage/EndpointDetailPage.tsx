@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCheckHistory, getCheckStats, type Check, type CheckStats } from '../../api/checks';
 import { getEndpoints, checkEndpoint, type Endpoint } from '../../api/endpoints';
-import { ResponseTimeChart } from '../../components/charts/ResponseTimeChart';
+import { ResponseTimeChart, type TimePeriod } from '../../components/charts/ResponseTimeChart';
 import { UptimeChart } from '../../components/charts/UptimeChart';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
@@ -21,9 +21,11 @@ export const EndpointDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [chartLoading, setChartLoading] = useState(false);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [chartPeriod, setChartPeriod] = useState<TimePeriod>('24h');
 
   const fetchEndpointAndStats = useCallback(async () => {
     if (!id) return;
@@ -32,16 +34,23 @@ export const EndpointDetailPage = () => {
       const ep = eps.find(e => e.id === id);
       if (ep) setEndpoint(ep);
 
-      const [cHist, st] = await Promise.all([
-        getCheckHistory(id, 50, 0),
-        getCheckStats(id).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }))
-      ]);
-      setChartHistory(cHist);
+      const st = await getCheckStats(id).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }));
       setStats(st);
     } finally {
       setLoading(false);
     }
   }, [id]);
+
+  const fetchChartHistory = useCallback(async () => {
+    if (!id) return;
+    setChartLoading(true);
+    try {
+      const cHist = await getCheckHistory(id, 1000, 0, chartPeriod);
+      setChartHistory(cHist);
+    } finally {
+      setChartLoading(false);
+    }
+  }, [id, chartPeriod]);
 
   const fetchHistoryPage = useCallback(async () => {
     if (!id) return;
@@ -60,6 +69,10 @@ export const EndpointDetailPage = () => {
   }, [fetchEndpointAndStats]);
 
   useEffect(() => {
+    fetchChartHistory();
+  }, [fetchChartHistory]);
+
+  useEffect(() => {
     fetchHistoryPage();
   }, [fetchHistoryPage]);
 
@@ -69,6 +82,7 @@ export const EndpointDetailPage = () => {
     try {
       await checkEndpoint(id);
       await fetchEndpointAndStats();
+      await fetchChartHistory();
       await fetchHistoryPage();
     } finally {
       setChecking(false);
@@ -86,7 +100,7 @@ export const EndpointDetailPage = () => {
   const totalPages = Math.max(1, Math.ceil(stats.totalChecks / pageSize));
 
   const chartData = [...chartHistory].reverse().map(h => ({
-    time: new Date(h.checkedAt).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }),
+    timestamp: new Date(h.checkedAt).getTime(),
     value: h.responseTimeMs || 0
   }));
 
@@ -134,7 +148,12 @@ export const EndpointDetailPage = () => {
 
       <div className="charts-grid">
         <div className="chart-main">
-          <ResponseTimeChart data={chartData} />
+          <ResponseTimeChart
+            data={chartData}
+            period={chartPeriod}
+            onPeriodChange={setChartPeriod}
+            loading={chartLoading}
+          />
         </div>
         <div className="chart-side">
           <UptimeChart percentage={stats.uptime} />
