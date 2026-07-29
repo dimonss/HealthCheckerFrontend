@@ -32,9 +32,11 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
   };
 
   const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
+  const rawStatus = endpoint.lastStatus || 'unknown';
+  const normalizedStatus = rawStatus === 'error' ? 'down' : rawStatus;
 
   return (
-    <div className={`endpoint-card glass ${isExiting ? 'animate-card-exit' : ''}`}>
+    <div className={`endpoint-card glass status-card-${normalizedStatus} ${isExiting ? 'animate-card-exit' : ''}`}>
       <div className="ec-header">
         <Link to={`/endpoint/${endpoint.id}`} className="ec-title">
           <h3>{endpoint.name}</h3>
@@ -42,6 +44,7 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
         </Link>
         <StatusBadge status={endpoint.lastStatus || 'unknown'} />
       </div>
+
       
       <div className="ec-body">
         <div className="ec-info">

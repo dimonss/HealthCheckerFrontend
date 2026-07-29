@@ -1,13 +1,41 @@
 
 .endpoint-card {
   padding: 20px;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.endpoint-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px 0 0 4px;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.status-card-up::before {
+  background: var(--color-up);
+  box-shadow: 0 0 10px rgba(0, 214, 143, 0.6);
+}
+
+.status-card-down::before {
+  background: var(--color-down);
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.7);
+}
+
+.status-card-unknown::before {
+  background: var(--text-muted);
 }
 
 .endpoint-card:hover {
   transform: translateY(-2px);
   border-color: rgba(255, 255, 255, 0.2);
 }
+
 
 .ec-header {
   display: flex;
