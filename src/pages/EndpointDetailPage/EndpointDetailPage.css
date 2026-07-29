@@ -53,13 +53,26 @@
   border-radius: var(--radius-lg);
 }
 
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .history-section h3 {
   font-size: 1.2rem;
-  margin-bottom: 20px;
+  margin: 0;
 }
 
 .table-responsive {
   overflow-x: auto;
+  transition: opacity var(--transition-fast);
+}
+
+.table-responsive.table-loading {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .history-table {
@@ -84,3 +97,4 @@
 .history-table tr:last-child td {
   border-bottom: none;
 }
+

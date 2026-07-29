@@ -8,6 +8,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Loader } from '../../components/ui/Loader';
+import { Pagination } from '../../components/ui/Pagination';
 import { ArrowLeft, Play, Clock, Zap, TrendingUp } from 'lucide-react';
 import './EndpointDetailPage.css';
 
@@ -15,48 +16,77 @@ export const EndpointDetailPage = () => {
   const { id } = useParams();
   const [endpoint, setEndpoint] = useState<Endpoint | null>(null);
   const [history, setHistory] = useState<Check[]>([]);
+  const [chartHistory, setChartHistory] = useState<Check[]>([]);
   const [stats, setStats] = useState<CheckStats>({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 });
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
-  const fetchDetail = useCallback(async () => {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const fetchEndpointAndStats = useCallback(async () => {
     if (!id) return;
     try {
       const eps = await getEndpoints();
       const ep = eps.find(e => e.id === id);
       if (ep) setEndpoint(ep);
-      
-      const [hist, st] = await Promise.all([
-        getCheckHistory(id),
+
+      const [cHist, st] = await Promise.all([
+        getCheckHistory(id, 50, 0),
         getCheckStats(id).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }))
       ]);
-      setHistory(hist);
+      setChartHistory(cHist);
       setStats(st);
     } finally {
       setLoading(false);
     }
   }, [id]);
 
+  const fetchHistoryPage = useCallback(async () => {
+    if (!id) return;
+    setHistoryLoading(true);
+    try {
+      const offset = (page - 1) * pageSize;
+      const hist = await getCheckHistory(id, pageSize, offset);
+      setHistory(hist);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [id, page, pageSize]);
+
   useEffect(() => {
-    fetchDetail();
-  }, [fetchDetail]);
+    fetchEndpointAndStats();
+  }, [fetchEndpointAndStats]);
+
+  useEffect(() => {
+    fetchHistoryPage();
+  }, [fetchHistoryPage]);
 
   const handleManualCheck = async () => {
     if (!id) return;
     setChecking(true);
     try {
       await checkEndpoint(id);
-      await fetchDetail();
+      await fetchEndpointAndStats();
+      await fetchHistoryPage();
     } finally {
       setChecking(false);
     }
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1);
+  };
+
   if (loading) return <Loader />;
   if (!endpoint) return <div className="not-found">Эндпоинт не найден</div>;
 
-  const chartData = [...history].reverse().map(h => ({
-    time: new Date(h.checkedAt).toLocaleTimeString('ru', { hour: '2-digit', minute:'2-digit' }),
+  const totalPages = Math.max(1, Math.ceil(stats.totalChecks / pageSize));
+
+  const chartData = [...chartHistory].reverse().map(h => ({
+    time: new Date(h.checkedAt).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }),
     value: h.responseTimeMs || 0
   }));
 
@@ -112,36 +142,52 @@ export const EndpointDetailPage = () => {
       </div>
 
       <div className="history-section glass">
-        <h3>История проверок</h3>
-        {history.length === 0 ? (
+        <div className="history-header">
+          <h3>История проверок</h3>
+        </div>
+
+        {historyLoading && history.length === 0 ? (
+          <Loader />
+        ) : history.length === 0 ? (
           <p className="no-data">Нет данных. Нажмите "Проверить" для первой проверки.</p>
         ) : (
-          <div className="table-responsive">
-            <table className="history-table">
-              <thead>
-                <tr>
-                  <th>Статус</th>
-                  <th>Время ответа</th>
-                  <th>Код ответа</th>
-                  <th>Дата и время</th>
-                  <th>Ошибка</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map(h => (
-                  <tr key={h.id}>
-                    <td>
-                      <Badge variant={h.status === 'up' ? 'up' : 'down'}>{h.status}</Badge>
-                    </td>
-                    <td>{h.responseTimeMs ?? '-'} мс</td>
-                    <td>{h.statusCode || '-'}</td>
-                    <td>{new Date(h.checkedAt).toLocaleString('ru')}</td>
-                    <td className="error-cell">{h.errorMessage || '-'}</td>
+          <>
+            <div className={`table-responsive ${historyLoading ? 'table-loading' : ''}`}>
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Статус</th>
+                    <th>Время ответа</th>
+                    <th>Код ответа</th>
+                    <th>Дата и время</th>
+                    <th>Ошибка</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {history.map(h => (
+                    <tr key={h.id}>
+                      <td>
+                        <Badge variant={h.status === 'up' ? 'up' : 'down'}>{h.status}</Badge>
+                      </td>
+                      <td>{h.responseTimeMs ?? '-'} мс</td>
+                      <td>{h.statusCode || '-'}</td>
+                      <td>{new Date(h.checkedAt).toLocaleString('ru')}</td>
+                      <td className="error-cell">{h.errorMessage || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              totalItems={stats.totalChecks}
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </>
         )}
       </div>
     </div>
