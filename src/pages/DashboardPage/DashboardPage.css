@@ -59,3 +59,45 @@
   font-size: 1.4rem;
   font-weight: 600;
 }
+
+@media (max-width: 640px) {
+  .dashboard-page {
+    gap: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .section-header button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-header h2 {
+    font-size: 1.2rem;
+  }
+}
+

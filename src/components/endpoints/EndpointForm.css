@@ -16,3 +16,20 @@
   gap: 12px;
   margin-top: 16px;
 }
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
+

@@ -96,3 +96,35 @@
   border-radius: 4px;
   transition: width 1s ease-in-out;
 }
+
+@media (max-width: 600px) {
+  .chart-container {
+    padding: 16px;
+  }
+
+  .chart-header {
+    margin-bottom: 14px;
+  }
+
+  .chart-interval-pills {
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+  }
+
+  .chart-pill {
+    padding: 6px 8px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .chart-wrapper {
+    min-height: 220px;
+  }
+
+  .uptime-value {
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+  }
+}
+

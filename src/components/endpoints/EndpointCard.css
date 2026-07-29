@@ -27,11 +27,13 @@
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
+  word-break: break-word;
 }
 
 .ec-url {
   font-size: 0.85rem;
   color: var(--text-secondary);
+  word-break: break-all;
 }
 
 .ec-body {
@@ -73,3 +75,24 @@
   color: var(--color-down) !important;
   background: rgba(255, 71, 87, 0.1) !important;
 }
+
+@media (max-width: 480px) {
+  .endpoint-card {
+    padding: 16px;
+  }
+
+  .ec-header {
+    gap: 8px;
+  }
+
+  .ec-body {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .ec-actions {
+    justify-content: flex-end;
+  }
+}
+

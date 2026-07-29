@@ -139,3 +139,30 @@
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
+
+@media (max-width: 576px) {
+  .undo-toast-stack-wrapper {
+    bottom: 16px;
+    padding: 0 12px;
+  }
+
+  .undo-toast-content {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .undo-toast-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .undo-toast-text {
+    font-size: 0.82rem;
+  }
+
+  .undo-toast-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+}
+

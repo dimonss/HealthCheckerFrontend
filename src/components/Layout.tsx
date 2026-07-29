@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { ThemeSwitcher } from './ui/ThemeSwitcher';
-import { Activity, LogOut, LayoutDashboard } from 'lucide-react';
+import { Activity, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
@@ -12,10 +12,16 @@ export const Layout = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
+    setIsMobileMenuOpen(false);
     logout();
     navigate('/');
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   const displayName = user?.firstName || user?.username || user?.email || t('userDefault');
@@ -24,13 +30,25 @@ export const Layout = () => {
 
   return (
     <div className="layout">
-      <aside className="sidebar glass">
-        <div className="brand">
+      {isMobileMenuOpen && (
+        <div className="sidebar-backdrop" onClick={closeMobileMenu} />
+      )}
+      <aside className={`sidebar glass ${isMobileMenuOpen ? 'open' : ''}`}>
+        <div className="sidebar-header-mobile">
+          <div className="brand">
+            <Activity className="brand-icon" />
+            <span>HealthChecker</span>
+          </div>
+          <button className="mobile-close-btn" onClick={closeMobileMenu} aria-label="Close navigation">
+            <X size={24} />
+          </button>
+        </div>
+        <div className="brand brand-desktop">
           <Activity className="brand-icon" />
           <span>HealthChecker</span>
         </div>
         <nav className="nav">
-          <Link to="/dashboard" className="nav-item">
+          <Link to="/dashboard" className="nav-item" onClick={closeMobileMenu}>
             <LayoutDashboard size={20} />
             <span>{t('dashboard')}</span>
           </Link>
@@ -58,7 +76,16 @@ export const Layout = () => {
       </aside>
       <main className="main-content">
         <header className="header glass">
-          <h2>{t('monitoring')}</h2>
+          <div className="header-left">
+            <button
+              className="mobile-menu-btn"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle navigation"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <h2>{t('monitoring')}</h2>
+          </div>
           <div className="header-controls">
             <ThemeSwitcher />
             <LanguageSwitcher />
@@ -71,3 +98,4 @@ export const Layout = () => {
     </div>
   );
 };
+
