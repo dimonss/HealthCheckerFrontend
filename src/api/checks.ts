@@ -25,6 +25,11 @@ export interface ChecksSummary {
   unknown: number;
 }
 
+export interface ChartDataPoint {
+  checkedAt: string;
+  responseTimeMs: number | null;
+}
+
 export const getCheckHistory = async (
   endpointId: string,
   limit = 50,
@@ -38,8 +43,13 @@ export const getCheckHistory = async (
   return res.data;
 };
 
-export const getCheckStats = async (endpointId: string): Promise<CheckStats> => {
-  const res = await apiClient.get(`/checks/endpoint/${endpointId}/stats`);
+export const getCheckChartData = async (endpointId: string, period = '24h'): Promise<ChartDataPoint[]> => {
+  const res = await apiClient.get(`/checks/endpoint/${endpointId}/chart`, { params: { period } });
+  return res.data;
+};
+
+export const getCheckStats = async (endpointId: string, period?: string): Promise<CheckStats> => {
+  const res = await apiClient.get(`/checks/endpoint/${endpointId}/stats`, { params: { period } });
   return res.data;
 };
 

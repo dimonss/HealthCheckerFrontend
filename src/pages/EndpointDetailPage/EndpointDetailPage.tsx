@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCheckHistory, getCheckStats, type Check, type CheckStats } from '../../api/checks';
+import { getCheckHistory, getCheckStats, getCheckChartData, type Check, type CheckStats, type ChartDataPoint } from '../../api/checks';
 import { getEndpoints, checkEndpoint, type Endpoint } from '../../api/endpoints';
 import { ResponseTimeChart, type TimePeriod } from '../../components/charts/ResponseTimeChart';
 import { UptimeChart } from '../../components/charts/UptimeChart';
@@ -16,8 +16,10 @@ export const EndpointDetailPage = () => {
   const { id } = useParams();
   const [endpoint, setEndpoint] = useState<Endpoint | null>(null);
   const [history, setHistory] = useState<Check[]>([]);
-  const [chartHistory, setChartHistory] = useState<Check[]>([]);
+  const [chartHistory, setChartHistory] = useState<ChartDataPoint[]>([]);
   const [stats, setStats] = useState<CheckStats>({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 });
+  const [allTimeTotalChecks, setAllTimeTotalChecks] = useState<number>(0);
+
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -27,26 +29,30 @@ export const EndpointDetailPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [chartPeriod, setChartPeriod] = useState<TimePeriod>('24h');
 
-  const fetchEndpointAndStats = useCallback(async () => {
+  const fetchEndpointAndAllTimeStats = useCallback(async () => {
     if (!id) return;
     try {
       const eps = await getEndpoints();
       const ep = eps.find(e => e.id === id);
       if (ep) setEndpoint(ep);
 
-      const st = await getCheckStats(id).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }));
-      setStats(st);
+      const allStats = await getCheckStats(id).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }));
+      setAllTimeTotalChecks(allStats.totalChecks);
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  const fetchChartHistory = useCallback(async () => {
+  const fetchChartHistoryAndStats = useCallback(async () => {
     if (!id) return;
     setChartLoading(true);
     try {
-      const cHist = await getCheckHistory(id, 1000, 0, chartPeriod);
+      const [cHist, st] = await Promise.all([
+        getCheckChartData(id, chartPeriod),
+        getCheckStats(id, chartPeriod).catch(() => ({ uptime: 100, avgResponseTime: 0, minResponseTime: 0, maxResponseTime: 0, totalChecks: 0 }))
+      ]);
       setChartHistory(cHist);
+      setStats(st);
     } finally {
       setChartLoading(false);
     }
@@ -65,12 +71,12 @@ export const EndpointDetailPage = () => {
   }, [id, page, pageSize]);
 
   useEffect(() => {
-    fetchEndpointAndStats();
-  }, [fetchEndpointAndStats]);
+    fetchEndpointAndAllTimeStats();
+  }, [fetchEndpointAndAllTimeStats]);
 
   useEffect(() => {
-    fetchChartHistory();
-  }, [fetchChartHistory]);
+    fetchChartHistoryAndStats();
+  }, [fetchChartHistoryAndStats]);
 
   useEffect(() => {
     fetchHistoryPage();
@@ -81,8 +87,8 @@ export const EndpointDetailPage = () => {
     setChecking(true);
     try {
       await checkEndpoint(id);
-      await fetchEndpointAndStats();
-      await fetchChartHistory();
+      await fetchEndpointAndAllTimeStats();
+      await fetchChartHistoryAndStats();
       await fetchHistoryPage();
     } finally {
       setChecking(false);
@@ -97,7 +103,7 @@ export const EndpointDetailPage = () => {
   if (loading) return <Loader />;
   if (!endpoint) return <div className="not-found">Эндпоинт не найден</div>;
 
-  const totalPages = Math.max(1, Math.ceil(stats.totalChecks / pageSize));
+  const totalPages = Math.max(1, Math.ceil(allTimeTotalChecks / pageSize));
 
   const chartData = [...chartHistory].reverse().map(h => ({
     timestamp: new Date(h.checkedAt).getTime(),
@@ -140,7 +146,7 @@ export const EndpointDetailPage = () => {
         <Card className="mini-stat">
           <TrendingUp size={18} />
           <div>
-            <span className="mini-label">Всего проверок</span>
+            <span className="mini-label">Проверок за период</span>
             <span className="mini-value">{stats.totalChecks}</span>
           </div>
         </Card>
@@ -202,7 +208,7 @@ export const EndpointDetailPage = () => {
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
-              totalItems={stats.totalChecks}
+              totalItems={allTimeTotalChecks}
               pageSize={pageSize}
               onPageSizeChange={handlePageSizeChange}
             />
