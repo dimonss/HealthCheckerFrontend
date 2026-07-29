@@ -1,0 +1,207 @@
+.telegram-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tg-status-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+}
+
+.tg-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(42, 171, 238, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2aabee;
+  flex-shrink: 0;
+}
+
+.tg-status-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.tg-status-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.text-connected {
+  color: var(--color-up);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text-not-connected {
+  color: var(--text-muted);
+}
+
+.tg-action-section {
+  display: flex;
+  justify-content: center;
+}
+
+.tg-code-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.tg-code-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.tg-code-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+
+}
+
+.tg-code-display code {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 1px;
+}
+
+.tg-copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.tg-copy-btn:hover {
+  color: var(--text-primary);
+}
+
+.text-success {
+  color: var(--color-up);
+}
+
+.tg-copied-msg {
+  font-size: 0.8rem;
+  color: var(--color-up);
+}
+
+.tg-instruction {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.tg-button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.tg-open-btn {
+  width: 100%;
+}
+
+.tg-unlink-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tg-chats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 16px;
+}
+
+.tg-chats-section h5 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tg-chats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.tg-chat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.tg-chat-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.tg-chat-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-chat-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tg-chat-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color var(--transition-fast);
+}
+
+.tg-chat-delete-btn:hover {
+  color: var(--color-down);
+}
+

@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { ThemeSwitcher } from './ui/ThemeSwitcher';
-import { Activity, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { TelegramModal } from './ui/TelegramModal';
+import { Activity, LogOut, LayoutDashboard, Menu, X, Send } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
@@ -13,6 +14,7 @@ export const Layout = () => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(false);
 
   const handleLogout = () => {
     setIsMobileMenuOpen(false);
@@ -52,6 +54,16 @@ export const Layout = () => {
             <LayoutDashboard size={20} />
             <span>{t('dashboard')}</span>
           </Link>
+          <button
+            className="nav-item nav-btn-item"
+            onClick={() => {
+              closeMobileMenu();
+              setIsTelegramModalOpen(true);
+            }}
+          >
+            <Send size={20} className="tg-nav-icon" />
+            <span>{t('telegramSettings')}</span>
+          </button>
         </nav>
         <div className="sidebar-footer">
           <div className="user-info">
@@ -87,6 +99,14 @@ export const Layout = () => {
             <h2>{t('monitoring')}</h2>
           </div>
           <div className="header-controls">
+            <button
+              className="tg-header-btn"
+              onClick={() => setIsTelegramModalOpen(true)}
+              title={t('telegramSettings')}
+            >
+              <Send size={18} />
+              <span className="tg-header-btn-text">{t('telegramSettings')}</span>
+            </button>
             <ThemeSwitcher />
             <LanguageSwitcher />
           </div>
@@ -95,7 +115,13 @@ export const Layout = () => {
           <Outlet />
         </div>
       </main>
+
+      <TelegramModal
+        isOpen={isTelegramModalOpen}
+        onClose={() => setIsTelegramModalOpen(false)}
+      />
     </div>
   );
 };
+
 

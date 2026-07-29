@@ -195,6 +195,48 @@
   gap: 12px;
 }
 
+.nav-btn-item {
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.tg-nav-icon {
+  color: #2aabee;
+}
+
+.tg-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(42, 171, 238, 0.12);
+  color: #2aabee;
+  border: 1px solid rgba(42, 171, 238, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tg-header-btn:hover {
+  background: rgba(42, 171, 238, 0.22);
+  border-color: rgba(42, 171, 238, 0.5);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .tg-header-btn-text {
+    display: none;
+  }
+}
+
+
 .page-content {
   flex: 1;
   padding: 32px;

@@ -94,6 +94,22 @@ export const translations = {
     themeDark: 'Тёмная',
     themeLight: 'Светлая',
     themeSystem: 'Устройство',
+
+    // Telegram Integration Modal
+    telegramSettings: 'Telegram Бот',
+    telegramConnected: 'Telegram привязан (ID: {id})',
+    telegramNotConnected: 'Telegram не привязан',
+    telegramConnectDesc: 'Подключите Telegram бота для получения мгновенных уведомлений в ЛС и Telegram-группы при не-200 статусе сервисов.',
+    generateCode: 'Сгенерировать код привязки',
+    codeValidTime: 'Код действителен 15 минут:',
+    sendCodeInstruction: 'Отправьте боту команду в ЛС или в группу:',
+    openInTelegram: 'Открыть бота в Telegram',
+    copyCode: 'Копировать код',
+    codeCopied: 'Код скопирован!',
+    unlinkTelegramBtn: 'Отвязать Telegram',
+    linkedChatsTitle: 'Подключенные группы и чаты ({count})',
+    noLinkedChats: 'Нет подключенных чатов',
+    unsubscribeChat: 'Отключить',
   },
   en: {
     // Auth & Login
@@ -186,7 +202,25 @@ export const translations = {
     themeDark: 'Dark',
     themeLight: 'Light',
     themeSystem: 'System',
+
+    // Telegram Integration Modal
+    telegramSettings: 'Telegram Bot',
+    telegramConnected: 'Telegram linked (ID: {id})',
+    telegramNotConnected: 'Telegram not linked',
+    telegramConnectDesc: 'Connect Telegram bot to get instant notifications in DM and Telegram groups when services return non-200 status.',
+    generateCode: 'Generate Link Code',
+    codeValidTime: 'Code valid for 15 minutes:',
+    sendCodeInstruction: 'Send command to bot in DM or group:',
+    openInTelegram: 'Open Bot in Telegram',
+    copyCode: 'Copy Code',
+    codeCopied: 'Code copied!',
+    unlinkTelegramBtn: 'Unlink Telegram',
+    linkedChatsTitle: 'Connected Groups & Chats ({count})',
+    noLinkedChats: 'No connected chats',
+    unsubscribeChat: 'Disconnect',
   }
+
+
 };
 
 export type TranslationKey = keyof typeof translations.ru;
