@@ -1,5 +1,6 @@
 
 .login-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -8,6 +9,12 @@
   background-size: 400% 400%;
   animation: gradientBg 15s ease infinite;
   padding: 20px;
+}
+
+.login-lang-switcher {
+  position: absolute;
+  top: 24px;
+  right: 24px;
 }
 
 .login-card {

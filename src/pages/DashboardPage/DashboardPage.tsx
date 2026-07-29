@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getEndpoints, createEndpoint, deleteEndpoint, checkEndpoint, type Endpoint, type CreateEndpointData } from '../../api/endpoints';
 import { getChecksSummary, type ChecksSummary } from '../../api/checks';
+import { useLanguage } from '../../context/LanguageContext';
 import { EndpointList } from '../../components/endpoints/EndpointList';
 import { EndpointForm } from '../../components/endpoints/EndpointForm';
 import { Modal } from '../../components/ui/Modal';
@@ -17,6 +18,7 @@ interface PendingDeletion {
 }
 
 export const DashboardPage = () => {
+  const { t } = useLanguage();
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +77,7 @@ export const DashboardPage = () => {
       await deleteEndpoint(pendingItem.endpoint.id);
       getChecksSummary().then(sum => sum && setSummary(sum)).catch(() => {});
     } catch (err) {
-      console.error('Ошибка при удалении эндпоинта', err);
+      console.error(t('deleteError'), err);
       // Restore on failure
       setEndpoints(prev => [...prev, pendingItem.endpoint]);
     } finally {
@@ -146,48 +148,48 @@ export const DashboardPage = () => {
         <Card className="stat-card">
           <div className="stat-icon bg-neutral"><Server size={24}/></div>
           <div className="stat-info">
-            <span className="stat-label">Всего эндпоинтов</span>
+            <span className="stat-label">{t('totalEndpoints')}</span>
             <span className="stat-value">{summary.total}</span>
           </div>
         </Card>
         <Card className="stat-card">
           <div className="stat-icon bg-up"><Activity size={24}/></div>
           <div className="stat-info">
-            <span className="stat-label">В сети</span>
+            <span className="stat-label">{t('online')}</span>
             <span className="stat-value text-up">{summary.up}</span>
           </div>
         </Card>
         <Card className="stat-card">
           <div className="stat-icon bg-down"><AlertTriangle size={24}/></div>
           <div className="stat-info">
-            <span className="stat-label">С ошибкой</span>
+            <span className="stat-label">{t('withError')}</span>
             <span className="stat-value text-down">{summary.down}</span>
           </div>
         </Card>
       </div>
 
       <div className="section-header">
-        <h2>Ваши эндпоинты</h2>
+        <h2>{t('yourEndpoints')}</h2>
         {endpoints.length < 10 && (
           <Button onClick={() => setIsModalOpen(true)}>
-            <Plus size={18} /> Добавить
+            <Plus size={18} /> {t('add')}
           </Button>
         )}
         {endpoints.length >= 10 && (
-          <span className="limit-warning">Лимит 10 эндпоинтов достигнут</span>
+          <span className="limit-warning">{t('limitReached')}</span>
         )}
       </div>
 
       <EndpointList endpoints={endpoints} onCheck={handleCheck} onDelete={handleDelete} />
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Новый эндпоинт">
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t('newEndpoint')}>
         <EndpointForm onSubmit={handleAdd} onCancel={() => setIsModalOpen(false)} />
       </Modal>
 
       <UndoToastStack
         items={pendingDeletions.map(p => ({
           id: p.endpoint.id,
-          message: `Эндпоинт "${p.endpoint.name}" удален`,
+          message: t('endpointDeleted', { name: p.endpoint.name }),
           durationMs: 5000,
           onUndo: () => handleUndo(p.endpoint.id),
           onClose: () => handleConfirmDelete(p.endpoint.id),
@@ -196,3 +198,4 @@ export const DashboardPage = () => {
     </div>
   );
 };
+

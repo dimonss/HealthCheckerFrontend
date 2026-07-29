@@ -1,11 +1,13 @@
+import { useLanguage } from '../../context/LanguageContext';
 import './Charts.css';
 
 export const UptimeChart = ({ percentage }: { percentage: number }) => {
+  const { t } = useLanguage();
   const color = percentage > 99 ? 'var(--color-up)' : percentage > 95 ? '#f59e0b' : 'var(--color-down)';
   
   return (
     <div className="chart-container glass uptime-container">
-      <h3>Общий Uptime</h3>
+      <h3>{t('overallUptime')}</h3>
       <div className="uptime-value" style={{ color }}>
         {percentage.toFixed(2)}%
       </div>
@@ -15,3 +17,4 @@ export const UptimeChart = ({ percentage }: { percentage: number }) => {
     </div>
   );
 };
+

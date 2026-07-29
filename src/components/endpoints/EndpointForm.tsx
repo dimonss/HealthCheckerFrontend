@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
+import { useLanguage, type TranslationKey } from '../../context/LanguageContext';
 import type { CreateEndpointData } from '../../api/endpoints';
 import './EndpointForm.css';
 
@@ -10,17 +11,18 @@ interface Props {
   onCancel: () => void;
 }
 
-const INTERVAL_OPTIONS = [
-  { value: '300', label: '5 мин' },
-  { value: '900', label: '15 мин' },
-  { value: '1800', label: '30 мин' },
-  { value: '3600', label: '1 час' },
-  { value: '21600', label: '6 часов' },
-  { value: '43200', label: '12 часов' },
-  { value: '86400', label: '24 часа' },
+const INTERVAL_CONFIG: { value: string; labelKey: TranslationKey }[] = [
+  { value: '300', labelKey: 'interval5min' },
+  { value: '900', labelKey: 'interval15min' },
+  { value: '1800', labelKey: 'interval30min' },
+  { value: '3600', labelKey: 'interval1hour' },
+  { value: '21600', labelKey: 'interval6hours' },
+  { value: '43200', labelKey: 'interval12hours' },
+  { value: '86400', labelKey: 'interval24hours' },
 ];
 
 export const EndpointForm = ({ onSubmit, onCancel }: Props) => {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [url, setUrl] = useState('https://');
   const [method, setMethod] = useState<'GET' | 'POST' | 'HEAD'>('GET');
@@ -37,16 +39,21 @@ export const EndpointForm = ({ onSubmit, onCancel }: Props) => {
     }
   };
 
+  const intervalOptions = INTERVAL_CONFIG.map(item => ({
+    value: item.value,
+    label: t(item.labelKey),
+  }));
+
   return (
     <form onSubmit={handleSubmit} className="endpoint-form">
       <Input 
-        label="Название" 
+        label={t('nameLabel')} 
         value={name}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
         required 
       />
       <Input 
-        label="URL" 
+        label={t('urlLabel')} 
         type="url"
         value={url}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
@@ -54,7 +61,7 @@ export const EndpointForm = ({ onSubmit, onCancel }: Props) => {
       />
       <div className="form-row">
         <Select 
-          label="Метод"
+          label={t('methodLabel')}
           value={method}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMethod(e.target.value as 'GET' | 'POST' | 'HEAD')}
           options={[
@@ -64,16 +71,17 @@ export const EndpointForm = ({ onSubmit, onCancel }: Props) => {
           ]}
         />
         <Select 
-          label="Интервал проверки"
+          label={t('intervalLabel')}
           value={String(checkIntervalSeconds)}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCheckIntervalSeconds(Number(e.target.value))}
-          options={INTERVAL_OPTIONS}
+          options={intervalOptions}
         />
       </div>
       <div className="form-actions">
-        <Button type="button" variant="ghost" onClick={onCancel}>Отмена</Button>
-        <Button type="submit" isLoading={loading}>Сохранить</Button>
+        <Button type="button" variant="ghost" onClick={onCancel}>{t('cancel')}</Button>
+        <Button type="submit" isLoading={loading}>{t('save')}</Button>
       </div>
     </form>
   );
 };
+

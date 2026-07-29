@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Activity, Clock, Trash2 } from 'lucide-react';
 import type { Endpoint } from '../../api/endpoints';
+import { useLanguage } from '../../context/LanguageContext';
 import { StatusBadge } from './StatusBadge';
 import { Button } from '../ui/Button';
 import './EndpointCard.css';
@@ -12,13 +13,16 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-const formatInterval = (seconds: number): string => {
-  if (seconds < 3600) return `${Math.round(seconds / 60)} мин`;
-  return `${Math.round(seconds / 3600)} ч`;
-};
-
 export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
+  const { t, language } = useLanguage();
   const [isExiting, setIsExiting] = useState(false);
+
+  const formatInterval = (seconds: number): string => {
+    if (seconds < 3600) {
+      return t('unitMin', { count: Math.round(seconds / 60) });
+    }
+    return t('unitHour', { count: Math.round(seconds / 3600) });
+  };
 
   const handleDeleteClick = () => {
     setIsExiting(true);
@@ -26,6 +30,8 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
       onDelete(endpoint.id);
     }, 320);
   };
+
+  const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
 
   return (
     <div className={`endpoint-card glass ${isExiting ? 'animate-card-exit' : ''}`}>
@@ -42,19 +48,19 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
           <span className="ec-method">{endpoint.method}</span>
           <div className="ec-meta">
             <Clock size={14} />
-            <span>Каждые {formatInterval(endpoint.checkIntervalSeconds)}</span>
+            <span>{t('every', { interval: formatInterval(endpoint.checkIntervalSeconds) })}</span>
           </div>
           {endpoint.lastCheckedAt && (
             <div className="ec-meta">
               <Activity size={14} />
-              <span>{new Date(endpoint.lastCheckedAt).toLocaleString('ru')}</span>
+              <span>{new Date(endpoint.lastCheckedAt).toLocaleString(dateLocale)}</span>
             </div>
           )}
         </div>
         
         <div className="ec-actions">
           <Button variant="secondary" size="sm" onClick={() => onCheck(endpoint.id)}>
-            <Play size={14} /> Проверить
+            <Play size={14} /> {t('check')}
           </Button>
           <Button
             variant="ghost"
@@ -70,3 +76,4 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
     </div>
   );
 };
+

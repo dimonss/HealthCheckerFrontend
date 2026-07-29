@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCheckHistory, getCheckStats, getCheckChartData, type Check, type CheckStats, type ChartDataPoint } from '../../api/checks';
 import { getEndpoints, checkEndpoint, type Endpoint } from '../../api/endpoints';
+import { useLanguage } from '../../context/LanguageContext';
 import { ResponseTimeChart, type TimePeriod } from '../../components/charts/ResponseTimeChart';
 import { UptimeChart } from '../../components/charts/UptimeChart';
 import { Badge } from '../../components/ui/Badge';
@@ -14,6 +15,7 @@ import './EndpointDetailPage.css';
 
 export const EndpointDetailPage = () => {
   const { id } = useParams();
+  const { t, language } = useLanguage();
   const [endpoint, setEndpoint] = useState<Endpoint | null>(null);
   const [history, setHistory] = useState<Check[]>([]);
   const [chartHistory, setChartHistory] = useState<ChartDataPoint[]>([]);
@@ -101,9 +103,10 @@ export const EndpointDetailPage = () => {
   };
 
   if (loading) return <Loader />;
-  if (!endpoint) return <div className="not-found">Эндпоинт не найден</div>;
+  if (!endpoint) return <div className="not-found">{t('endpointNotFound')}</div>;
 
   const totalPages = Math.max(1, Math.ceil(allTimeTotalChecks / pageSize));
+  const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
 
   const chartData = [...chartHistory].reverse().map(h => ({
     timestamp: new Date(h.checkedAt).getTime(),
@@ -114,7 +117,7 @@ export const EndpointDetailPage = () => {
     <div className="endpoint-detail animate-fade-in">
       <div className="ed-header">
         <Link to="/dashboard" className="back-link">
-          <ArrowLeft size={20} /> Назад
+          <ArrowLeft size={20} /> {t('back')}
         </Link>
         <div className="ed-title-row">
           <h1>{endpoint.name}</h1>
@@ -122,7 +125,7 @@ export const EndpointDetailPage = () => {
             {endpoint.lastStatus || 'unknown'}
           </Badge>
           <Button variant="secondary" size="sm" onClick={handleManualCheck} isLoading={checking}>
-            <Play size={14} /> Проверить
+            <Play size={14} /> {t('check')}
           </Button>
         </div>
         <a href={endpoint.url} target="_blank" rel="noreferrer" className="ed-url">{endpoint.url}</a>
@@ -132,21 +135,21 @@ export const EndpointDetailPage = () => {
         <Card className="mini-stat">
           <Clock size={18} />
           <div>
-            <span className="mini-label">Среднее время</span>
-            <span className="mini-value">{stats.avgResponseTime} мс</span>
+            <span className="mini-label">{t('avgResponseTime')}</span>
+            <span className="mini-value">{stats.avgResponseTime} {t('ms')}</span>
           </div>
         </Card>
         <Card className="mini-stat">
           <Zap size={18} />
           <div>
-            <span className="mini-label">Мин / Макс</span>
-            <span className="mini-value">{stats.minResponseTime} / {stats.maxResponseTime} мс</span>
+            <span className="mini-label">{t('minMaxResponseTime')}</span>
+            <span className="mini-value">{stats.minResponseTime} / {stats.maxResponseTime} {t('ms')}</span>
           </div>
         </Card>
         <Card className="mini-stat">
           <TrendingUp size={18} />
           <div>
-            <span className="mini-label">Проверок за период</span>
+            <span className="mini-label">{t('checksForPeriod')}</span>
             <span className="mini-value">{stats.totalChecks}</span>
           </div>
         </Card>
@@ -168,24 +171,24 @@ export const EndpointDetailPage = () => {
 
       <div className="history-section glass">
         <div className="history-header">
-          <h3>История проверок</h3>
+          <h3>{t('checkHistory')}</h3>
         </div>
 
         {historyLoading && history.length === 0 ? (
           <Loader />
         ) : history.length === 0 ? (
-          <p className="no-data">Нет данных. Нажмите "Проверить" для первой проверки.</p>
+          <p className="no-data">{t('noHistoryData')}</p>
         ) : (
           <>
             <div className={`table-responsive ${historyLoading ? 'table-loading' : ''}`}>
               <table className="history-table">
                 <thead>
                   <tr>
-                    <th>Статус</th>
-                    <th>Время ответа</th>
-                    <th>Код ответа</th>
-                    <th>Дата и время</th>
-                    <th>Ошибка</th>
+                    <th>{t('colStatus')}</th>
+                    <th>{t('colResponseTime')}</th>
+                    <th>{t('colResponseCode')}</th>
+                    <th>{t('colDateTime')}</th>
+                    <th>{t('colError')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -194,9 +197,9 @@ export const EndpointDetailPage = () => {
                       <td>
                         <Badge variant={h.status === 'up' ? 'up' : 'down'}>{h.status}</Badge>
                       </td>
-                      <td>{h.responseTimeMs ?? '-'} мс</td>
+                      <td>{h.responseTimeMs ?? '-'} {t('ms')}</td>
                       <td>{h.statusCode || '-'}</td>
-                      <td>{new Date(h.checkedAt).toLocaleString('ru')}</td>
+                      <td>{new Date(h.checkedAt).toLocaleString(dateLocale)}</td>
                       <td className="error-cell">{h.errorMessage || '-'}</td>
                     </tr>
                   ))}
@@ -218,3 +221,4 @@ export const EndpointDetailPage = () => {
     </div>
   );
 };
+

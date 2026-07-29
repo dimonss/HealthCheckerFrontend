@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 import './Pagination.css';
 
 interface PaginationProps {
@@ -21,6 +22,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageSizeChange,
   pageSizeOptions = [5, 10, 25, 50],
 }) => {
+  const { t } = useLanguage();
+
   if (totalPages <= 0) return null;
 
   const getPageNumbers = () => {
@@ -71,13 +74,13 @@ export const Pagination: React.FC<PaginationProps> = ({
       <div className="pagination-info">
         {totalItems !== undefined && startItem !== null && endItem !== null && totalItems > 0 ? (
           <span className="pagination-count">
-            Показано <strong>{startItem}–{endItem}</strong> из <strong>{totalItems}</strong>
+            {t('showingCount', { start: startItem, end: endItem, total: totalItems })}
           </span>
         ) : null}
 
         {pageSize && onPageSizeChange && (
           <div className="page-size-selector">
-            <label htmlFor="pageSizeSelect">Показывать по:</label>
+            <label htmlFor="pageSizeSelect">{t('showPerPage')}</label>
             <select
               id="pageSizeSelect"
               className="page-size-select"
@@ -100,7 +103,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           className="pagination-btn nav-btn"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          aria-label="Предыдущая страница"
+          aria-label={t('prevPage')}
         >
           <ChevronLeft size={16} />
         </button>
@@ -126,7 +129,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           className="pagination-btn nav-btn"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          aria-label="Следующая страница"
+          aria-label={t('nextPage')}
         >
           <ChevronRight size={16} />
         </button>
@@ -134,3 +137,4 @@ export const Pagination: React.FC<PaginationProps> = ({
     </div>
   );
 };
+

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { RotateCcw, X, Trash2 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 import './UndoToast.css';
 
 export interface ToastItemData {
@@ -24,6 +25,7 @@ export const UndoToastItem = ({
   onUndo,
   onClose,
 }: SingleToastProps) => {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState(Math.ceil(durationMs / 1000));
 
   useEffect(() => {
@@ -43,19 +45,20 @@ export const UndoToastItem = ({
 
         <div className="undo-toast-info">
           <span className="undo-toast-text">{message}</span>
-          <span className="undo-toast-timer">({timeLeft}с)</span>
+          <span className="undo-toast-timer">({timeLeft}{t('secUnit')})</span>
         </div>
 
         <div className="undo-toast-actions">
           <button className="undo-toast-btn" onClick={onUndo}>
             <RotateCcw size={15} />
-            <span>Отменить</span>
+            <span>{t('undo')}</span>
           </button>
-          <button className="undo-toast-close" onClick={onClose} title="Закрыть">
+          <button className="undo-toast-close" onClick={onClose} title={t('close')}>
             <X size={16} />
           </button>
         </div>
       </div>
+
 
       <div className="undo-toast-progress-track">
         <div

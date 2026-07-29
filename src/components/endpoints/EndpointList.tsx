@@ -1,4 +1,5 @@
 import type { Endpoint } from '../../api/endpoints';
+import { useLanguage } from '../../context/LanguageContext';
 import { EndpointCard } from './EndpointCard';
 import './EndpointList.css';
 
@@ -9,8 +10,10 @@ interface Props {
 }
 
 export const EndpointList = ({ endpoints, onCheck, onDelete }: Props) => {
+  const { t } = useLanguage();
+
   if (endpoints.length === 0) {
-    return <div className="empty-state glass">Нет добавленных эндпоинтов</div>;
+    return <div className="empty-state glass">{t('noEndpoints')}</div>;
   }
 
   return (
@@ -21,3 +24,4 @@ export const EndpointList = ({ endpoints, onCheck, onDelete }: Props) => {
     </div>
   );
 };
+

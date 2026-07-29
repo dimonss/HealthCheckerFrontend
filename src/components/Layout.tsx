@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { Activity, LogOut, LayoutDashboard } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
 
@@ -14,7 +17,7 @@ export const Layout = () => {
     navigate('/');
   };
 
-  const displayName = user?.firstName || user?.username || user?.email || 'Пользователь';
+  const displayName = user?.firstName || user?.username || user?.email || t('userDefault');
   const initial = displayName[0]?.toUpperCase() || 'U';
   const avatarUrl = user?.photoUrl;
 
@@ -28,7 +31,7 @@ export const Layout = () => {
         <nav className="nav">
           <Link to="/dashboard" className="nav-item">
             <LayoutDashboard size={20} />
-            <span>Дашборд</span>
+            <span>{t('dashboard')}</span>
           </Link>
         </nav>
         <div className="sidebar-footer">
@@ -48,13 +51,14 @@ export const Layout = () => {
           </div>
           <button className="logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
-            <span>Выйти</span>
+            <span>{t('logout')}</span>
           </button>
         </div>
       </aside>
       <main className="main-content">
         <header className="header glass">
-          <h2>Мониторинг</h2>
+          <h2>{t('monitoring')}</h2>
+          <LanguageSwitcher />
         </header>
         <div className="page-content">
           <Outlet />
@@ -63,3 +67,4 @@ export const Layout = () => {
     </div>
   );
 };
+

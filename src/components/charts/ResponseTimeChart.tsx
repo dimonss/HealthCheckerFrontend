@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLanguage, type TranslationKey } from '../../context/LanguageContext';
 import './Charts.css';
 
 export interface DataPoint {
@@ -15,32 +16,12 @@ interface ResponseTimeChartProps {
   loading?: boolean;
 }
 
-const PERIOD_OPTIONS: { value: TimePeriod; label: string }[] = [
-  { value: '1h', label: '1 час' },
-  { value: '24h', label: '24 часа' },
-  { value: '7d', label: '7 дней' },
-  { value: '30d', label: '30 дней' },
+const PERIOD_CONFIG: { value: TimePeriod; labelKey: TranslationKey }[] = [
+  { value: '1h', labelKey: 'period1h' },
+  { value: '24h', labelKey: 'period24h' },
+  { value: '7d', labelKey: 'period7d' },
+  { value: '30d', labelKey: 'period30d' },
 ];
-
-const formatXAxisTick = (ts: number, period: TimePeriod) => {
-  if (!ts) return '';
-  const d = new Date(ts);
-  if (period === '7d' || period === '30d') {
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    return `${day}.${month}`;
-  }
-  return d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
-};
-
-const formatTooltipLabel = (ts: number) => {
-  if (!ts) return '';
-  const d = new Date(ts);
-  const day = d.getDate().toString().padStart(2, '0');
-  const month = (d.getMonth() + 1).toString().padStart(2, '0');
-  const time = d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  return `${day}.${month} ${time}`;
-};
 
 export const ResponseTimeChart = ({
   data,
@@ -48,6 +29,7 @@ export const ResponseTimeChart = ({
   onPeriodChange,
   loading = false,
 }: ResponseTimeChartProps) => {
+  const { t, language } = useLanguage();
   const now = Date.now();
   let periodMs = 24 * 60 * 60 * 1000;
   if (period === '1h') periodMs = 60 * 60 * 1000;
@@ -58,13 +40,35 @@ export const ResponseTimeChart = ({
   const startTime = now - periodMs;
   const endTime = now;
 
+  const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
+
+  const formatXAxisTick = (ts: number, period: TimePeriod) => {
+    if (!ts) return '';
+    const d = new Date(ts);
+    if (period === '7d' || period === '30d') {
+      const day = d.getDate().toString().padStart(2, '0');
+      const month = (d.getMonth() + 1).toString().padStart(2, '0');
+      return `${day}.${month}`;
+    }
+    return d.toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatTooltipLabel = (ts: number) => {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const time = d.toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return `${day}.${month} ${time}`;
+  };
+
   return (
     <div className="chart-container glass">
       <div className="chart-header">
-        <h3>Время ответа (мс)</h3>
+        <h3>{t('responseTimeTitle')}</h3>
         {onPeriodChange && (
           <div className="chart-interval-pills">
-            {PERIOD_OPTIONS.map((item) => (
+            {PERIOD_CONFIG.map((item) => (
               <button
                 key={item.value}
                 type="button"
@@ -72,7 +76,7 @@ export const ResponseTimeChart = ({
                 onClick={() => onPeriodChange(item.value)}
                 disabled={loading}
               >
-                {item.label}
+                {t(item.labelKey)}
               </button>
             ))}
           </div>
@@ -102,7 +106,7 @@ export const ResponseTimeChart = ({
             <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <Tooltip
               labelFormatter={formatTooltipLabel}
-              formatter={(val: number) => [`${val} мс`, 'Время ответа']}
+              formatter={(val: number) => [`${val} ${t('ms')}`, t('responseTimeTooltip')]}
               contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}
               itemStyle={{ color: 'var(--color-up)' }}
             />
@@ -113,3 +117,4 @@ export const ResponseTimeChart = ({
     </div>
   );
 };
+
