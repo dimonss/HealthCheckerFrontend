@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "tunnel": "ssh -N -R 8090:127.0.0.1:8090 root@your-server.com"
+    "tunnel": "ssh -N -R 8090:127.0.0.1:8090 root@chalysh.pro"
   },
   "dependencies": {
     "axios": "^1.7.9",

@@ -3,11 +3,10 @@ import react from '@vitejs/plugin-react'
 
 declare const process: any;
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  // Default base path to '/dev/' for local development.
-  // Default to '/health/' for production build (override via VITE_BASE_PATH if needed).
-  const basePath = env.VITE_BASE_PATH || (command === 'build' ? '/health/' : '/dev/');
+  // Base path defaults to '/dev/' (override via VITE_BASE_PATH if needed).
+  const basePath = env.VITE_BASE_PATH || '/dev/';
 
   return {
     plugins: [react()],
@@ -18,17 +17,17 @@ export default defineConfig(({ command, mode }) => {
       allowedHosts: true,
       proxy: {
         '/dev/api': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dev\/api/, '/api'),
         },
         '/health/api': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/health\/api/, '/api'),
         },
         '/api': {
-          target: 'http://localhost:3002',
+          target: 'http://127.0.0.1:3002',
           changeOrigin: true,
         },
       },

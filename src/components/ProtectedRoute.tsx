@@ -19,8 +19,12 @@ export const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) return <Loader fullScreen />;
   if (user) {
-    const redirect = sessionStorage.getItem('redirect_path') || '/dashboard';
+    let redirect = sessionStorage.getItem('redirect_path') || '/dashboard';
     sessionStorage.removeItem('redirect_path');
+    const base = import.meta.env.BASE_URL;
+    if (base && base !== '/' && redirect.startsWith(base)) {
+      redirect = redirect.slice(base.length - 1);
+    }
     return <Navigate to={redirect} replace />;
   }
   return <>{children}</>;
