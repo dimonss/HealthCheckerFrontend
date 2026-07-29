@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Activity, LogOut, LayoutDashboard } from 'lucide-react';
@@ -6,6 +7,7 @@ import './Layout.css';
 export const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -14,6 +16,7 @@ export const Layout = () => {
 
   const displayName = user?.firstName || user?.username || user?.email || 'Пользователь';
   const initial = displayName[0]?.toUpperCase() || 'U';
+  const avatarUrl = user?.photoUrl;
 
   return (
     <div className="layout">
@@ -30,7 +33,17 @@ export const Layout = () => {
         </nav>
         <div className="sidebar-footer">
           <div className="user-info">
-            <div className="avatar">{initial}</div>
+            {avatarUrl && !imageError ? (
+              <img
+                src={avatarUrl}
+                alt={displayName}
+                className="avatar-img"
+                referrerPolicy="no-referrer"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="avatar">{initial}</div>
+            )}
             <span className="user-name">{displayName}</span>
           </div>
           <button className="logout-btn" onClick={handleLogout}>

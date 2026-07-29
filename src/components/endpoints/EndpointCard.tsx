@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Activity, Clock, Trash2 } from 'lucide-react';
 import type { Endpoint } from '../../api/endpoints';
@@ -17,8 +18,17 @@ const formatInterval = (seconds: number): string => {
 };
 
 export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
+  const [isExiting, setIsExiting] = useState(false);
+
+  const handleDeleteClick = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onDelete(endpoint.id);
+    }, 320);
+  };
+
   return (
-    <div className="endpoint-card glass">
+    <div className={`endpoint-card glass ${isExiting ? 'animate-card-exit' : ''}`}>
       <div className="ec-header">
         <Link to={`/endpoint/${endpoint.id}`} className="ec-title">
           <h3>{endpoint.name}</h3>
@@ -46,7 +56,13 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
           <Button variant="secondary" size="sm" onClick={() => onCheck(endpoint.id)}>
             <Play size={14} /> Проверить
           </Button>
-          <Button variant="ghost" size="sm" className="btn-icon-danger" onClick={() => onDelete(endpoint.id)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="btn-icon-danger"
+            onClick={handleDeleteClick}
+            disabled={isExiting}
+          >
             <Trash2 size={16} />
           </Button>
         </div>
