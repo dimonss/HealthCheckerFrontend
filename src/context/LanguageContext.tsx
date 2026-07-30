@@ -110,6 +110,8 @@ export const translations = {
     linkedChatsTitle: 'Подключенные группы и чаты ({count})',
     noLinkedChats: 'Нет подключенных чатов',
     unsubscribeChat: 'Отключить',
+    chatDisconnectedToast: 'Чат "{name}" отключен',
+    telegramUnlinkedToast: 'Telegram аккаунт отвязан',
   },
   en: {
     // Auth & Login
@@ -218,7 +220,10 @@ export const translations = {
     linkedChatsTitle: 'Connected Groups & Chats ({count})',
     noLinkedChats: 'No connected chats',
     unsubscribeChat: 'Disconnect',
+    chatDisconnectedToast: 'Chat "{name}" disconnected',
+    telegramUnlinkedToast: 'Telegram account unlinked',
   }
+
 
 
 };

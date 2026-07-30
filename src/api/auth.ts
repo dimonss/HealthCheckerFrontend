@@ -61,6 +61,7 @@ export interface TelegramChat {
   chatId: string;
   title?: string | null;
   type: string;
+  isActive: boolean;
   createdAt: string;
 }
 
@@ -79,8 +80,13 @@ export const getTelegramChats = async (): Promise<TelegramChat[]> => {
   return res.data;
 };
 
+export const toggleTelegramChat = async (chatId: string, isActive: boolean): Promise<void> => {
+  await apiClient.patch(`/auth/telegram-chats/${chatId}`, { isActive });
+};
+
 export const deleteTelegramChat = async (chatId: string): Promise<void> => {
   await apiClient.delete(`/auth/telegram-chats/${chatId}`);
 };
+
 
 
