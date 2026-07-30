@@ -110,7 +110,8 @@ export const EndpointDetailPage = () => {
 
   const chartData = [...chartHistory].reverse().map(h => ({
     timestamp: new Date(h.checkedAt).getTime(),
-    value: h.responseTimeMs || 0
+    value: h.responseTimeMs || 0,
+    status: h.status
   }));
 
   return (

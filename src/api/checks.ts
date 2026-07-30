@@ -28,6 +28,7 @@ export interface ChecksSummary {
 export interface ChartDataPoint {
   checkedAt: string;
   responseTimeMs: number | null;
+  status?: 'up' | 'down' | 'error';
 }
 
 export const getCheckHistory = async (

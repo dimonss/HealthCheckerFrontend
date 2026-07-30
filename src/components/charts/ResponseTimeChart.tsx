@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLanguage, type TranslationKey } from '../../context/LanguageContext';
 import './Charts.css';
@@ -5,6 +6,7 @@ import './Charts.css';
 export interface DataPoint {
   timestamp: number;
   value: number;
+  status?: 'up' | 'down' | 'error';
 }
 
 export type TimePeriod = '1h' | '24h' | '7d' | '30d';
@@ -62,6 +64,48 @@ export const ResponseTimeChart = ({
     return `${day}.${month} ${time}`;
   };
 
+  const gradientStops = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    if (data.length === 1) {
+      const isUp = data[0].status === 'up' || !data[0].status;
+      const color = isUp ? 'var(--color-up)' : 'var(--color-down)';
+      return [{ offset: 0, color }, { offset: 100, color }];
+    }
+
+    const tMin = data[0].timestamp;
+    const tMax = data[data.length - 1].timestamp;
+    const range = tMax - tMin;
+
+    return data.map((d, index) => {
+      const pct = range > 0 
+        ? ((d.timestamp - tMin) / range) * 100 
+        : (index / (data.length - 1)) * 100;
+      const isUp = d.status === 'up' || !d.status;
+      const color = isUp ? 'var(--color-up)' : 'var(--color-down)';
+      return {
+        offset: Math.min(100, Math.max(0, pct)),
+        color,
+      };
+    });
+  }, [data]);
+
+  const RenderDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    if (cx === undefined || cy === undefined || !payload) return null;
+    const isSuccess = payload.status === 'up' || !payload.status;
+    const color = isSuccess ? 'var(--color-up)' : 'var(--color-down)';
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={data.length > 50 ? 3 : 4}
+        fill={color}
+        stroke="var(--bg-secondary)"
+        strokeWidth={1.5}
+      />
+    );
+  };
+
   return (
     <div className="chart-container glass">
       <div className="chart-header">
@@ -86,9 +130,15 @@ export const ResponseTimeChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
-              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-up)" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="var(--color-up)" stopOpacity={0}/>
+              <linearGradient id="responseTimeStrokeGradient" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                {gradientStops.map((stop, i) => (
+                  <stop key={i} offset={`${stop.offset}%`} stopColor={stop.color} stopOpacity={1} />
+                ))}
+              </linearGradient>
+              <linearGradient id="responseTimeFillGradient" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                {gradientStops.map((stop, i) => (
+                  <stop key={i} offset={`${stop.offset}%`} stopColor={stop.color} stopOpacity={0.25} />
+                ))}
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
@@ -106,11 +156,24 @@ export const ResponseTimeChart = ({
             <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <Tooltip
               labelFormatter={formatTooltipLabel}
-              formatter={(val: number) => [`${val} ${t('ms')}`, t('responseTimeTooltip')]}
+              formatter={(val: number, _name: any, item: any) => {
+                const status = item?.payload?.status;
+                const statusText = status ? ` (${status.toUpperCase()})` : '';
+                return [`${val} ${t('ms')}${statusText}`, t('responseTimeTooltip')];
+              }}
               contentStyle={{ background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}
-              itemStyle={{ color: 'var(--color-up)' }}
+              itemStyle={{ color: 'var(--text-primary)' }}
             />
-            <Area type="monotone" dataKey="value" stroke="var(--color-up)" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="url(#responseTimeStrokeGradient)"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#responseTimeFillGradient)"
+              dot={<RenderDot />}
+              activeDot={{ r: 6, strokeWidth: 2 }}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
