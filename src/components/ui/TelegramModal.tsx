@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Modal } from './Modal';
 import { Button } from './Button';
+import { Loader } from './Loader';
 import { UndoToastStack, type ToastItemData } from './UndoToast';
 import {
   getTelegramLinkCode,
@@ -50,8 +51,11 @@ export const TelegramModal = ({ isOpen, onClose }: TelegramModalProps) => {
   const pendingUnlinkRef = useRef(pendingUnlink);
   pendingUnlinkRef.current = pendingUnlink;
 
+  const [chatsLoading, setChatsLoading] = useState(false);
+
   const fetchChats = async () => {
     if (!user?.telegramId || optimisticUnlinked) return;
+    setChatsLoading(true);
     try {
       const list = await getTelegramChats();
       // Filter out pending chat deletes
@@ -59,6 +63,8 @@ export const TelegramModal = ({ isOpen, onClose }: TelegramModalProps) => {
       setChats(list.filter(c => !activePendingIds.has(c.chatId)));
     } catch (e) {
       console.error('Failed to fetch Telegram chats:', e);
+    } finally {
+      setChatsLoading(false);
     }
   };
 
@@ -286,37 +292,43 @@ export const TelegramModal = ({ isOpen, onClose }: TelegramModalProps) => {
             </div>
           )}
 
-          {isConnected && chats.length > 0 && (
+          {isConnected && (
             <div className="tg-chats-section">
-              <h5>{t('linkedChatsTitle', { count: chats.length })}</h5>
-              <div className="tg-chats-list">
-                {chats.map(chat => (
-                  <div key={chat.id} className="tg-chat-item">
-                    <div className="tg-chat-item-info">
-                      {chat.type === 'private' ? <MessageSquare size={16} /> : <Users size={16} />}
-                      <span className="tg-chat-title">{chat.title || chat.chatId}</span>
-                      <span className="tg-chat-badge">{chat.type}</span>
-                    </div>
-                    <div className="tg-chat-item-actions">
-                      <label className="tg-switch" title={chat.isActive !== false ? 'Уведомления включены' : 'Уведомления отключены'}>
-                        <input
-                          type="checkbox"
-                          checked={chat.isActive !== false}
-                          onChange={() => handleToggleChatActive(chat.chatId, chat.isActive !== false)}
-                        />
-                        <span className="tg-slider round" />
-                      </label>
-                      <button
-                        className="tg-chat-delete-btn"
-                        onClick={() => handleDeleteChat(chat.chatId)}
-                        title={t('unsubscribeChat')}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+              {chatsLoading ? (
+                <Loader />
+              ) : chats.length > 0 && (
+                <>
+                  <h5>{t('linkedChatsTitle', { count: chats.length })}</h5>
+                  <div className="tg-chats-list">
+                    {chats.map(chat => (
+                      <div key={chat.id} className="tg-chat-item">
+                        <div className="tg-chat-item-info">
+                          {chat.type === 'private' ? <MessageSquare size={16} /> : <Users size={16} />}
+                          <span className="tg-chat-title">{chat.title || chat.chatId}</span>
+                          <span className="tg-chat-badge">{chat.type}</span>
+                        </div>
+                        <div className="tg-chat-item-actions">
+                          <label className="tg-switch" title={chat.isActive !== false ? 'Уведомления включены' : 'Уведомления отключены'}>
+                            <input
+                              type="checkbox"
+                              checked={chat.isActive !== false}
+                              onChange={() => handleToggleChatActive(chat.chatId, chat.isActive !== false)}
+                            />
+                            <span className="tg-slider round" />
+                          </label>
+                          <button
+                            className="tg-chat-delete-btn"
+                            onClick={() => handleDeleteChat(chat.chatId)}
+                            title={t('unsubscribeChat')}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
           )}
         </div>

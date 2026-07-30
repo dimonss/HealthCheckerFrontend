@@ -254,10 +254,14 @@
     left: 0;
     bottom: 0;
     height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
     z-index: 1000;
     transform: translateX(-100%);
     box-shadow: none;
     background: var(--bg-secondary);
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
   .sidebar.open {
