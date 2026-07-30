@@ -88,8 +88,8 @@ export const ResponseTimeChart = ({
       };
     });
   }, [data]);
-
   const RenderDot = (props: any) => {
+    if (!data || data.length >= 21) return null;
     const { cx, cy, payload } = props;
     if (cx === undefined || cy === undefined || !payload) return null;
     const isSuccess = payload.status === 'up' || !payload.status;
@@ -98,14 +98,13 @@ export const ResponseTimeChart = ({
       <circle
         cx={cx}
         cy={cy}
-        r={data.length > 50 ? 3 : 4}
+        r={4}
         fill={color}
         stroke="var(--bg-secondary)"
         strokeWidth={1.5}
       />
     );
   };
-
   return (
     <div className="chart-container glass">
       <div className="chart-header">
