@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Activity, Clock, Trash2 } from 'lucide-react';
+import { Play, Activity, Clock, Trash2, Users } from 'lucide-react';
 import type { Endpoint } from '../../api/endpoints';
 import { useLanguage } from '../../context/LanguageContext';
 import { StatusBadge } from './StatusBadge';
@@ -34,16 +34,23 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
   const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
   const rawStatus = endpoint.lastStatus || 'unknown';
   const normalizedStatus = rawStatus === 'error' ? 'down' : rawStatus;
+  const isShared = endpoint.isOwner === false;
 
   return (
-    <div className={`endpoint-card glass status-card-${normalizedStatus} ${isExiting ? 'animate-card-exit' : ''}`}>
+    <div className={`endpoint-card glass status-card-${normalizedStatus} ${isShared ? 'is-shared-card' : ''} ${isExiting ? 'animate-card-exit' : ''}`}>
       <div className="ec-header">
         <Link to={`/endpoint/${endpoint.id}`} className="ec-title">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <h3>{endpoint.name}</h3>
-            {endpoint.isOwner === false && (
-              <span className="role-badge viewer" style={{ fontSize: '0.7rem' }}>
-                {t('sharedBy', { name: endpoint.ownerName || '' })}
+            {isShared && (
+              <span className="shared-owner-tag" title={t('sharedBy', { name: endpoint.ownerName || '' })}>
+                <Users size={12} />
+                <span>{t('sharedBy', { name: endpoint.ownerName || '' })}</span>
+                {endpoint.accessRole && (
+                  <span className={`role-chip ${endpoint.accessRole}`}>
+                    {endpoint.accessRole === 'editor' ? t('roleEditor') : t('roleViewer')}
+                  </span>
+                )}
               </span>
             )}
           </div>

@@ -22,6 +22,8 @@ export const translations = {
     online: 'В сети',
     withError: 'С ошибкой',
     yourEndpoints: 'Ваши эндпоинты',
+    myEndpoints: 'Мои эндпоинты',
+    allFilter: 'Все',
     add: 'Добавить',
     limitReached: 'Лимит 10 эндпоинтов достигнут',
     newEndpoint: 'Новый эндпоинт',
@@ -30,6 +32,8 @@ export const translations = {
 
     // Endpoint List & Card
     noEndpoints: 'Нет добавленных эндпоинтов',
+    noOwnedEndpoints: 'У вас пока нет собственных эндпоинтов',
+    noSharedEndpoints: 'Вам пока не предоставляли доступ к эндпоинтам',
     check: 'Проверить',
     every: 'Каждые {interval}',
     unitMin: '{count} мин',
@@ -164,6 +168,8 @@ export const translations = {
     online: 'Online',
     withError: 'With Error',
     yourEndpoints: 'Your Endpoints',
+    myEndpoints: 'My Endpoints',
+    allFilter: 'All',
     add: 'Add',
     limitReached: 'Limit of 10 endpoints reached',
     newEndpoint: 'New Endpoint',
@@ -172,6 +178,8 @@ export const translations = {
 
     // Endpoint List & Card
     noEndpoints: 'No endpoints added',
+    noOwnedEndpoints: 'No endpoints created by you yet',
+    noSharedEndpoints: 'No shared endpoints available yet',
     check: 'Check',
     every: 'Every {interval}',
     unitMin: '{count} min',
