@@ -39,7 +39,14 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
     <div className={`endpoint-card glass status-card-${normalizedStatus} ${isExiting ? 'animate-card-exit' : ''}`}>
       <div className="ec-header">
         <Link to={`/endpoint/${endpoint.id}`} className="ec-title">
-          <h3>{endpoint.name}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <h3>{endpoint.name}</h3>
+            {endpoint.isOwner === false && (
+              <span className="role-badge viewer" style={{ fontSize: '0.7rem' }}>
+                {t('sharedBy', { name: endpoint.ownerName || '' })}
+              </span>
+            )}
+          </div>
           <span className="ec-url">{endpoint.url}</span>
         </Link>
         <StatusBadge status={endpoint.lastStatus || 'unknown'} />
@@ -65,15 +72,17 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
           <Button variant="secondary" size="sm" onClick={() => onCheck(endpoint.id)}>
             <Play size={14} /> {t('check')}
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="btn-icon-danger"
-            onClick={handleDeleteClick}
-            disabled={isExiting}
-          >
-            <Trash2 size={16} />
-          </Button>
+          {endpoint.isOwner !== false && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="btn-icon-danger"
+              onClick={handleDeleteClick}
+              disabled={isExiting}
+            >
+              <Trash2 size={16} />
+            </Button>
+          )}
         </div>
       </div>
     </div>

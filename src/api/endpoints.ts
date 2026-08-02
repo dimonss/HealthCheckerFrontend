@@ -12,6 +12,9 @@ export interface Endpoint {
   lastStatus?: 'up' | 'down' | 'error' | 'unknown' | null;
   createdAt: string;
   updatedAt: string;
+  isOwner?: boolean;
+  ownerName?: string;
+  accessRole?: 'owner' | 'editor' | 'viewer';
 }
 
 export interface CreateEndpointData {

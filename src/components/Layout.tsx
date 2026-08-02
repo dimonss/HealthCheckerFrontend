@@ -5,7 +5,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { ThemeSwitcher } from './ui/ThemeSwitcher';
 import { TelegramModal } from './ui/TelegramModal';
-import { Activity, LogOut, LayoutDashboard, Menu, X, Send } from 'lucide-react';
+import { InviteModal } from './invites/InviteModal';
+import { Activity, LogOut, LayoutDashboard, Menu, X, Send, UserPlus } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
@@ -15,6 +16,7 @@ export const Layout = () => {
   const [imageError, setImageError] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const handleLogout = () => {
     setIsMobileMenuOpen(false);
@@ -54,6 +56,16 @@ export const Layout = () => {
             <LayoutDashboard size={20} />
             <span>{t('dashboard')}</span>
           </Link>
+          <button
+            className="nav-item nav-btn-item"
+            onClick={() => {
+              closeMobileMenu();
+              setIsInviteModalOpen(true);
+            }}
+          >
+            <UserPlus size={20} />
+            <span>{t('accessManagement')}</span>
+          </button>
           <button
             className="nav-item nav-btn-item"
             onClick={() => {
@@ -101,6 +113,14 @@ export const Layout = () => {
           <div className="header-controls">
             <button
               className="tg-header-btn"
+              onClick={() => setIsInviteModalOpen(true)}
+              title={t('accessManagement')}
+            >
+              <UserPlus size={18} />
+              <span className="tg-header-btn-text">{t('shareAccess')}</span>
+            </button>
+            <button
+              className="tg-header-btn"
               onClick={() => setIsTelegramModalOpen(true)}
               title={t('telegramSettings')}
             >
@@ -119,6 +139,11 @@ export const Layout = () => {
       <TelegramModal
         isOpen={isTelegramModalOpen}
         onClose={() => setIsTelegramModalOpen(false)}
+      />
+
+      <InviteModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
       />
     </div>
   );
