@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getInviteInfo, acceptInvite, type InviteInfoResponse } from '../../api/invites';
 import { useAuth } from '../../context/AuthContext';
@@ -17,12 +17,17 @@ export const AcceptInvitePage: React.FC = () => {
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const autoAcceptTriedRef = useRef(false);
 
   useEffect(() => {
     if (token) {
       loadInfo(token);
+      if (!user) {
+        sessionStorage.setItem('redirect_path', `/invite/${token}`);
+        localStorage.setItem('pendingInviteToken', token);
+      }
     }
-  }, [token]);
+  }, [token, user]);
 
   const loadInfo = async (invToken: string) => {
     setLoading(true);
@@ -55,6 +60,17 @@ export const AcceptInvitePage: React.FC = () => {
       setAccepting(false);
     }
   };
+
+  useEffect(() => {
+    if (user && token && inviteInfo && inviteInfo.isValid && !success && !accepting && !error && !autoAcceptTriedRef.current) {
+      const pendingToken = localStorage.getItem('pendingInviteToken');
+      if (pendingToken === token) {
+        autoAcceptTriedRef.current = true;
+        localStorage.removeItem('pendingInviteToken');
+        handleAccept();
+      }
+    }
+  }, [user, token, inviteInfo, success, accepting, error]);
 
   if (loading) {
     return (
@@ -142,6 +158,7 @@ export const AcceptInvitePage: React.FC = () => {
               to={`/?returnUrl=${encodeURIComponent(`/invite/${token}`)}`}
               className="btn-primary btn-accept"
               onClick={() => {
+                sessionStorage.setItem('redirect_path', `/invite/${token}`);
                 localStorage.setItem('pendingInviteToken', token || '');
               }}
             >
