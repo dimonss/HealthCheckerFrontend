@@ -18,6 +18,11 @@ interface InviteModalProps {
   onClose: () => void;
 }
 
+const getInviteUrl = (token: string) => {
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return `${window.location.origin}${basePath}/invite/${token}`;
+};
+
 export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'create' | 'links' | 'access'>('create');
@@ -81,7 +86,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
         expiresInHours
       });
 
-      const fullLink = `${window.location.origin}/invite/${result.token}`;
+      const fullLink = getInviteUrl(result.token);
       setGeneratedLink(fullLink);
       setCopied(false);
 
@@ -231,7 +236,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
                 <div className="empty-state">{t('noActiveLinks')}</div>
               ) : (
                 invitesList.map(inv => {
-                  const fullUrl = `${window.location.origin}/invite/${inv.token}`;
+                  const fullUrl = getInviteUrl(inv.token);
                   return (
                     <div key={inv.id} className="invite-item-card">
                       <div className="invite-item-info">
