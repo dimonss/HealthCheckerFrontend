@@ -31,6 +31,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
   const [selectedEndpointId, setSelectedEndpointId] = useState<string>('all');
   const [role, setRole] = useState<'viewer' | 'editor'>('viewer');
   const [expiresInHours, setExpiresInHours] = useState<number | null>(null);
+  const [isTelegramNotify, setIsTelegramNotify] = useState(true);
 
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -83,7 +84,8 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
       const result = await createInvite({
         endpointId: selectedEndpointId === 'all' ? null : selectedEndpointId,
         role,
-        expiresInHours
+        expiresInHours,
+        isTelegramNotify
       });
 
       const fullLink = getInviteUrl(result.token);
@@ -204,6 +206,23 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
                   <option value="24">{t('expire24h')}</option>
                   <option value="168">{t('expire7d')}</option>
                 </select>
+              </div>
+
+              <div className="form-group" style={{ marginTop: '0.25rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={isTelegramNotify}
+                    onChange={e => setIsTelegramNotify(e.target.checked)}
+                    style={{ width: '18px', height: '18px', accentColor: 'var(--color-accent)' }}
+                  />
+                  <span style={{ fontWeight: 500, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                    {t('allowTgNotifications')}
+                  </span>
+                </label>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>
+                  {t('allowTgNotificationsHint')}
+                </span>
               </div>
 
               <button type="submit" className="btn-primary" disabled={loading}>

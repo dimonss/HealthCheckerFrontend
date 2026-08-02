@@ -5,6 +5,7 @@ export interface CreateInviteData {
   role: 'viewer' | 'editor';
   expiresInHours?: number | null;
   maxUses?: number | null;
+  isTelegramNotify?: boolean;
 }
 
 export interface InviteLink {
@@ -17,6 +18,7 @@ export interface InviteLink {
   maxUses?: number | null;
   usedCount: number;
   expiresAt?: string | null;
+  isTelegramNotify?: boolean;
   createdAt: string;
 }
 
