@@ -52,6 +52,7 @@ export interface AccessGrantItem {
   inviter?: { name: string; email?: string | null };
   role: 'viewer' | 'editor';
   endpointName: string;
+  expiresAt?: string | null;
   createdAt: string;
 }
 

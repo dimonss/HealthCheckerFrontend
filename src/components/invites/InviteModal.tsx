@@ -294,6 +294,11 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
                             <span className={`role-badge ${item.role}`}>
                               {item.role === 'editor' ? t('roleEditor') : t('roleViewer')}
                             </span>
+                            <span>
+                              {item.expiresAt
+                                ? `До ${new Date(item.expiresAt).toLocaleDateString()}`
+                                : t('expireNever')}
+                            </span>
                           </div>
                         </div>
                         <button
@@ -324,6 +329,11 @@ export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => 
                             <span>{item.endpointName}</span>
                             <span className={`role-badge ${item.role}`}>
                               {item.role === 'editor' ? t('roleEditor') : t('roleViewer')}
+                            </span>
+                            <span>
+                              {item.expiresAt
+                                ? `До ${new Date(item.expiresAt).toLocaleDateString()}`
+                                : t('expireNever')}
                             </span>
                           </div>
                         </div>
