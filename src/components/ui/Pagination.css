@@ -105,4 +105,16 @@
     align-items: center;
     gap: 12px;
   }
+
+  .pagination-info {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.8rem;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }

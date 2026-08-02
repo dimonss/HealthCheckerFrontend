@@ -256,4 +256,30 @@ input:checked + .tg-slider:before {
   transform: translateX(16px);
 }
 
+@media (max-width: 576px) {
+  .telegram-modal-content {
+    gap: 14px;
+  }
+
+  .tg-status-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .tg-icon-wrapper {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .tg-code-display code {
+    font-size: 1rem;
+  }
+
+  .tg-chat-item {
+    padding: 8px 10px;
+  }
+}
+
+
 
