@@ -74,7 +74,7 @@ export const EndpointList = ({ endpoints, onCheck, onDelete, onEdit }: Props) =>
 
       {(filter === 'all' || filter === 'shared') && (sharedEndpoints.length > 0 || filter === 'shared') && (
         <div className="endpoint-section shared-section" style={{ marginTop: hasBothTypes && filter === 'all' ? '12px' : '0' }}>
-          {(ownedEndpoints.length > 0 || filter === 'shared') && (
+          {(sharedEndpoints.length > 0 || filter === 'shared') && (
             <div className="endpoint-section-title shared-section-title">
               <Users size={18} className="text-shared" />
               <h3>{t('sharedWithMe')}</h3>
