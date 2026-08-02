@@ -111,22 +111,6 @@ export const Layout = () => {
             <h2>{t('monitoring')}</h2>
           </div>
           <div className="header-controls">
-            <button
-              className="tg-header-btn"
-              onClick={() => setIsInviteModalOpen(true)}
-              title={t('accessManagement')}
-            >
-              <UserPlus size={18} />
-              <span className="tg-header-btn-text">{t('shareAccess')}</span>
-            </button>
-            <button
-              className="tg-header-btn"
-              onClick={() => setIsTelegramModalOpen(true)}
-              title={t('telegramSettings')}
-            >
-              <Send size={18} />
-              <span className="tg-header-btn-text">{t('telegramSettings')}</span>
-            </button>
             <ThemeSwitcher />
             <LanguageSwitcher />
           </div>
