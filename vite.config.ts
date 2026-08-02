@@ -12,6 +12,17 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [react()],
     base: basePath,
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-recharts': ['recharts'],
+            'vendor-icons': ['lucide-react'],
+          },
+        },
+      },
+    },
     server: {
       port: 8090,
       host: '127.0.0.1',
