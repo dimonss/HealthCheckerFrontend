@@ -27,6 +27,8 @@ export const translations = {
     add: 'Добавить',
     limitReached: 'Лимит 10 эндпоинтов достигнут',
     newEndpoint: 'Новый эндпоинт',
+    editEndpoint: 'Редактировать эндпоинт',
+    edit: 'Редактировать',
     endpointDeleted: 'Эндпоинт "{name}" удален',
     deleteError: 'Ошибка при удалении эндпоинта',
 
@@ -173,6 +175,8 @@ export const translations = {
     add: 'Add',
     limitReached: 'Limit of 10 endpoints reached',
     newEndpoint: 'New Endpoint',
+    editEndpoint: 'Edit Endpoint',
+    edit: 'Edit',
     endpointDeleted: 'Endpoint "{name}" deleted',
     deleteError: 'Error deleting endpoint',
 

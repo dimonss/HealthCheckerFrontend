@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Activity, Clock, Trash2, Users } from 'lucide-react';
+import { Play, Activity, Clock, Trash2, Users, Pencil } from 'lucide-react';
 import type { Endpoint } from '../../api/endpoints';
 import { useLanguage } from '../../context/LanguageContext';
 import { StatusBadge } from './StatusBadge';
@@ -11,9 +11,10 @@ interface Props {
   endpoint: Endpoint;
   onCheck: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit?: (endpoint: Endpoint) => void;
 }
 
-export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
+export const EndpointCard = ({ endpoint, onCheck, onDelete, onEdit }: Props) => {
   const { t, language } = useLanguage();
   const [isExiting, setIsExiting] = useState(false);
 
@@ -35,6 +36,7 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
   const rawStatus = endpoint.lastStatus || 'unknown';
   const normalizedStatus = rawStatus === 'error' ? 'down' : rawStatus;
   const isShared = endpoint.isOwner === false;
+  const canEdit = endpoint.isOwner !== false || endpoint.accessRole === 'editor';
 
   return (
     <div className={`endpoint-card glass status-card-${normalizedStatus} ${isShared ? 'is-shared-card' : ''} ${isExiting ? 'animate-card-exit' : ''}`}>
@@ -79,6 +81,16 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete }: Props) => {
           <Button variant="secondary" size="sm" onClick={() => onCheck(endpoint.id)}>
             <Play size={14} /> {t('check')}
           </Button>
+          {canEdit && onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(endpoint)}
+              title={t('edit')}
+            >
+              <Pencil size={16} />
+            </Button>
+          )}
           {endpoint.isOwner !== false && (
             <Button
               variant="ghost"

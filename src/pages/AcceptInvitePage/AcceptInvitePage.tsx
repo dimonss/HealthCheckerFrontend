@@ -24,7 +24,6 @@ export const AcceptInvitePage: React.FC = () => {
       loadInfo(token);
       if (!user) {
         sessionStorage.setItem('redirect_path', `/invite/${token}`);
-        localStorage.setItem('pendingInviteToken', token);
       }
     }
   }, [token, user]);
@@ -61,12 +60,13 @@ export const AcceptInvitePage: React.FC = () => {
     }
   };
 
+  // If user explicitly clicked "Войти, чтобы принять" before auth, auto-accept after auth redirect
   useEffect(() => {
     if (user && token && inviteInfo && inviteInfo.isValid && !success && !accepting && !error && !autoAcceptTriedRef.current) {
-      const pendingToken = localStorage.getItem('pendingInviteToken');
-      if (pendingToken === token) {
+      const pendingAutoAccept = sessionStorage.getItem('auto_accept_invite');
+      if (pendingAutoAccept === token) {
         autoAcceptTriedRef.current = true;
-        localStorage.removeItem('pendingInviteToken');
+        sessionStorage.removeItem('auto_accept_invite');
         handleAccept();
       }
     }
@@ -159,7 +159,7 @@ export const AcceptInvitePage: React.FC = () => {
               className="btn-primary btn-accept"
               onClick={() => {
                 sessionStorage.setItem('redirect_path', `/invite/${token}`);
-                localStorage.setItem('pendingInviteToken', token || '');
+                sessionStorage.setItem('auto_accept_invite', token || '');
               }}
             >
               <span>Войти, чтобы принять</span>

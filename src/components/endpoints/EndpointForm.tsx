@@ -7,6 +7,12 @@ import type { CreateEndpointData } from '../../api/endpoints';
 import './EndpointForm.css';
 
 interface Props {
+  initialData?: {
+    name?: string;
+    url?: string;
+    method?: string;
+    checkIntervalSeconds?: number;
+  };
   onSubmit: (data: CreateEndpointData) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,12 +27,12 @@ const INTERVAL_CONFIG: { value: string; labelKey: TranslationKey }[] = [
   { value: '86400', labelKey: 'interval24hours' },
 ];
 
-export const EndpointForm = ({ onSubmit, onCancel }: Props) => {
+export const EndpointForm = ({ initialData, onSubmit, onCancel }: Props) => {
   const { t } = useLanguage();
-  const [name, setName] = useState('');
-  const [url, setUrl] = useState('https://');
-  const [method, setMethod] = useState<'GET' | 'POST' | 'HEAD'>('GET');
-  const [checkIntervalSeconds, setCheckIntervalSeconds] = useState(300);
+  const [name, setName] = useState(initialData?.name || '');
+  const [url, setUrl] = useState(initialData?.url || 'https://');
+  const [method, setMethod] = useState<'GET' | 'POST' | 'HEAD'>((initialData?.method as 'GET' | 'POST' | 'HEAD') || 'GET');
+  const [checkIntervalSeconds, setCheckIntervalSeconds] = useState(initialData?.checkIntervalSeconds || 300);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

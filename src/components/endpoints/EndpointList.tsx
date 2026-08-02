@@ -9,9 +9,10 @@ interface Props {
   endpoints: Endpoint[];
   onCheck: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit?: (endpoint: Endpoint) => void;
 }
 
-export const EndpointList = ({ endpoints, onCheck, onDelete }: Props) => {
+export const EndpointList = ({ endpoints, onCheck, onDelete, onEdit }: Props) => {
   const { t } = useLanguage();
   const [filter, setFilter] = useState<'all' | 'mine' | 'shared'>('all');
 
@@ -64,7 +65,7 @@ export const EndpointList = ({ endpoints, onCheck, onDelete }: Props) => {
           ) : (
             <div className="endpoint-list">
               {ownedEndpoints.map(ep => (
-                <EndpointCard key={ep.id} endpoint={ep} onCheck={onCheck} onDelete={onDelete} />
+                <EndpointCard key={ep.id} endpoint={ep} onCheck={onCheck} onDelete={onDelete} onEdit={onEdit} />
               ))}
             </div>
           )}
@@ -85,7 +86,7 @@ export const EndpointList = ({ endpoints, onCheck, onDelete }: Props) => {
           ) : (
             <div className="endpoint-list">
               {sharedEndpoints.map(ep => (
-                <EndpointCard key={ep.id} endpoint={ep} onCheck={onCheck} onDelete={onDelete} />
+                <EndpointCard key={ep.id} endpoint={ep} onCheck={onCheck} onDelete={onDelete} onEdit={onEdit} />
               ))}
             </div>
           )}

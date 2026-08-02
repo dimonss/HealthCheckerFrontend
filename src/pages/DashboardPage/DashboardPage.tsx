@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { getEndpoints, createEndpoint, deleteEndpoint, checkEndpoint, type Endpoint, type CreateEndpointData } from '../../api/endpoints';
+import { getEndpoints, createEndpoint, updateEndpoint, deleteEndpoint, checkEndpoint, type Endpoint, type CreateEndpointData } from '../../api/endpoints';
 import { getChecksSummary, type ChecksSummary } from '../../api/checks';
 import { useLanguage } from '../../context/LanguageContext';
 import { EndpointList } from '../../components/endpoints/EndpointList';
@@ -22,6 +22,7 @@ export const DashboardPage = () => {
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingEndpoint, setEditingEndpoint] = useState<Endpoint | null>(null);
   const [summary, setSummary] = useState<ChecksSummary>({ total: 0, up: 0, down: 0, unknown: 0 });
   const [pendingDeletions, setPendingDeletions] = useState<PendingDeletion[]>([]);
 
@@ -69,6 +70,13 @@ export const DashboardPage = () => {
   const handleAdd = async (data: CreateEndpointData) => {
     await createEndpoint(data);
     setIsModalOpen(false);
+    fetchData();
+  };
+
+  const handleUpdate = async (data: CreateEndpointData) => {
+    if (!editingEndpoint) return;
+    await updateEndpoint(editingEndpoint.id, data);
+    setEditingEndpoint(null);
     fetchData();
   };
 
@@ -180,10 +188,21 @@ export const DashboardPage = () => {
         )}
       </div>
 
-      <EndpointList endpoints={endpoints} onCheck={handleCheck} onDelete={handleDelete} />
+      <EndpointList endpoints={endpoints} onCheck={handleCheck} onDelete={handleDelete} onEdit={setEditingEndpoint} />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t('newEndpoint')}>
         <EndpointForm onSubmit={handleAdd} onCancel={() => setIsModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={!!editingEndpoint} onClose={() => setEditingEndpoint(null)} title={t('editEndpoint')}>
+        {editingEndpoint && (
+          <EndpointForm
+            key={editingEndpoint.id}
+            initialData={editingEndpoint}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditingEndpoint(null)}
+          />
+        )}
       </Modal>
 
       <UndoToastStack

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCheckHistory, getCheckStats, getCheckChartData, type Check, type CheckStats, type ChartDataPoint } from '../../api/checks';
-import { getEndpoints, checkEndpoint, type Endpoint } from '../../api/endpoints';
+import { getEndpoints, checkEndpoint, updateEndpoint, type Endpoint, type CreateEndpointData } from '../../api/endpoints';
 import { useLanguage } from '../../context/LanguageContext';
 import { ResponseTimeChart, type TimePeriod } from '../../components/charts/ResponseTimeChart';
 import { UptimeChart } from '../../components/charts/UptimeChart';
@@ -9,8 +9,10 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Loader } from '../../components/ui/Loader';
+import { Modal } from '../../components/ui/Modal';
+import { EndpointForm } from '../../components/endpoints/EndpointForm';
 import { Pagination } from '../../components/ui/Pagination';
-import { ArrowLeft, Play, Clock, Zap, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Play, Clock, Zap, TrendingUp, Pencil } from 'lucide-react';
 import './EndpointDetailPage.css';
 
 export const EndpointDetailPage = () => {
@@ -26,6 +28,7 @@ export const EndpointDetailPage = () => {
   const [checking, setChecking] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -97,6 +100,13 @@ export const EndpointDetailPage = () => {
     }
   };
 
+  const handleUpdate = async (data: CreateEndpointData) => {
+    if (!id) return;
+    await updateEndpoint(id, data);
+    setIsEditModalOpen(false);
+    await fetchEndpointAndAllTimeStats();
+  };
+
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     setPage(1);
@@ -107,6 +117,7 @@ export const EndpointDetailPage = () => {
 
   const totalPages = Math.max(1, Math.ceil(allTimeTotalChecks / pageSize));
   const dateLocale = language === 'ru' ? 'ru-RU' : 'en-US';
+  const canEdit = endpoint.isOwner !== false || endpoint.accessRole === 'editor';
 
   const chartData = [...chartHistory].reverse().map(h => ({
     timestamp: new Date(h.checkedAt).getTime(),
@@ -128,6 +139,11 @@ export const EndpointDetailPage = () => {
           <Button variant="secondary" size="sm" onClick={handleManualCheck} isLoading={checking}>
             <Play size={14} /> {t('check')}
           </Button>
+          {canEdit && (
+            <Button variant="ghost" size="sm" onClick={() => setIsEditModalOpen(true)} title={t('edit')}>
+              <Pencil size={16} />
+            </Button>
+          )}
         </div>
         <a href={endpoint.url} target="_blank" rel="noreferrer" className="ed-url">{endpoint.url}</a>
       </div>
@@ -219,6 +235,17 @@ export const EndpointDetailPage = () => {
           </>
         )}
       </div>
+
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('editEndpoint')}>
+        {endpoint && (
+          <EndpointForm
+            key={endpoint.id}
+            initialData={endpoint}
+            onSubmit={handleUpdate}
+            onCancel={() => setIsEditModalOpen(false)}
+          />
+        )}
+      </Modal>
     </div>
   );
 };
