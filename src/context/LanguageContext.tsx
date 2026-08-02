@@ -40,6 +40,10 @@ export const translations = {
     every: 'Каждые {interval}',
     unitMin: '{count} мин',
     unitHour: '{count} ч',
+    tgOn: 'TG: Вкл',
+    tgOff: 'TG: Выкл',
+    tgNotifyEnabled: 'Уведомления в Telegram включены для этого эндпоинта',
+    tgNotifyDisabled: 'Уведомления в Telegram отключены для этого эндпоинта',
 
     // Endpoint Form
     nameLabel: 'Название',
@@ -188,6 +192,10 @@ export const translations = {
     every: 'Every {interval}',
     unitMin: '{count} min',
     unitHour: '{count} h',
+    tgOn: 'TG: On',
+    tgOff: 'TG: Off',
+    tgNotifyEnabled: 'Telegram notifications enabled for this endpoint',
+    tgNotifyDisabled: 'Telegram notifications disabled for this endpoint',
 
     // Endpoint Form
     nameLabel: 'Name',

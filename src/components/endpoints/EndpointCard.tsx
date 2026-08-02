@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Activity, Clock, Trash2, Users, Pencil } from 'lucide-react';
-import type { Endpoint } from '../../api/endpoints';
+import { Play, Activity, Clock, Trash2, Users, Pencil, Send } from 'lucide-react';
+import { type Endpoint, toggleEndpointTelegramNotify } from '../../api/endpoints';
 import { useLanguage } from '../../context/LanguageContext';
 import { StatusBadge } from './StatusBadge';
 import { Button } from '../ui/Button';
@@ -17,6 +17,22 @@ interface Props {
 export const EndpointCard = ({ endpoint, onCheck, onDelete, onEdit }: Props) => {
   const { t, language } = useLanguage();
   const [isExiting, setIsExiting] = useState(false);
+  const [isTgNotify, setIsTgNotify] = useState<boolean>(endpoint.isTelegramNotify !== false);
+  const [togglingTg, setTogglingTg] = useState(false);
+
+  const handleTgToggle = async () => {
+    const nextVal = !isTgNotify;
+    setIsTgNotify(nextVal);
+    setTogglingTg(true);
+    try {
+      await toggleEndpointTelegramNotify(endpoint.id, nextVal);
+    } catch (e) {
+      console.error(e);
+      setIsTgNotify(!nextVal);
+    } finally {
+      setTogglingTg(false);
+    }
+  };
 
   const formatInterval = (seconds: number): string => {
     if (seconds < 3600) {
@@ -64,7 +80,19 @@ export const EndpointCard = ({ endpoint, onCheck, onDelete, onEdit }: Props) => 
       
       <div className="ec-body">
         <div className="ec-info">
-          <span className="ec-method">{endpoint.method}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span className="ec-method">{endpoint.method}</span>
+            <button
+              type="button"
+              className={`tg-notify-toggle ${isTgNotify ? 'active' : 'inactive'}`}
+              onClick={handleTgToggle}
+              disabled={togglingTg}
+              title={isTgNotify ? t('tgNotifyEnabled') : t('tgNotifyDisabled')}
+            >
+              <Send size={12} />
+              <span>{isTgNotify ? t('tgOn') : t('tgOff')}</span>
+            </button>
+          </div>
           <div className="ec-meta">
             <Clock size={14} />
             <span>{t('every', { interval: formatInterval(endpoint.checkIntervalSeconds) })}</span>

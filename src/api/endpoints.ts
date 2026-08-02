@@ -15,6 +15,7 @@ export interface Endpoint {
   isOwner?: boolean;
   ownerName?: string;
   accessRole?: 'owner' | 'editor' | 'viewer';
+  isTelegramNotify?: boolean;
 }
 
 export interface CreateEndpointData {
@@ -46,5 +47,10 @@ export const deleteEndpoint = async (id: string): Promise<void> => {
 
 export const checkEndpoint = async (id: string): Promise<Endpoint> => {
   const res = await apiClient.post(`/endpoints/${id}/check`);
+  return res.data;
+};
+
+export const toggleEndpointTelegramNotify = async (id: string, isTelegramNotify: boolean): Promise<{ success: boolean; isTelegramNotify: boolean }> => {
+  const res = await apiClient.patch(`/endpoints/${id}/telegram-toggle`, { isTelegramNotify });
   return res.data;
 };
