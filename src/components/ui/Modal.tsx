@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './Modal.css';
 
 interface ModalProps {
@@ -10,6 +11,8 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+  useEscapeKey(onClose, isOpen);
+
   if (!isOpen) return null;
 
   return (
@@ -28,3 +31,4 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     </div>
   );
 };
+

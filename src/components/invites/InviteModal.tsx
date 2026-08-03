@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { getEndpoints, type Endpoint } from '../../api/endpoints';
 import {
   createInvite,
@@ -24,6 +25,8 @@ const getInviteUrl = (token: string) => {
 };
 
 export const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose }) => {
+  useEscapeKey(onClose, isOpen);
+
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'create' | 'links' | 'access'>('create');
 
