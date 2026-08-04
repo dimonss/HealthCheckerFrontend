@@ -75,6 +75,14 @@ export const EndpointDetailPage = () => {
     }
   }, [id, page, pageSize]);
 
+  const refreshAllData = useCallback(async () => {
+    await Promise.all([
+      fetchEndpointAndAllTimeStats(),
+      fetchChartHistoryAndStats(),
+      fetchHistoryPage()
+    ]);
+  }, [fetchEndpointAndAllTimeStats, fetchChartHistoryAndStats, fetchHistoryPage]);
+
   useEffect(() => {
     fetchEndpointAndAllTimeStats();
   }, [fetchEndpointAndAllTimeStats]);
@@ -86,6 +94,66 @@ export const EndpointDetailPage = () => {
   useEffect(() => {
     fetchHistoryPage();
   }, [fetchHistoryPage]);
+
+  useEffect(() => {
+    if (!endpoint || endpoint.isActive === false) return;
+
+    const checkIntervalMs = (endpoint.checkIntervalSeconds || 300) * 1000;
+    const latestTimestamp = endpoint.lastCheckedAt
+      ? new Date(endpoint.lastCheckedAt).getTime()
+      : (chartHistory.length > 0 ? new Date(chartHistory[0].checkedAt).getTime() : null);
+
+    const now = Date.now();
+    const bufferMs = 5000;
+
+    let delay = checkIntervalMs + bufferMs;
+    if (latestTimestamp && !isNaN(latestTimestamp)) {
+      const nextCheckTime = latestTimestamp + checkIntervalMs + bufferMs;
+      delay = nextCheckTime - now;
+    }
+
+    if (delay <= 0) {
+      delay = 3000;
+    }
+
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleFetch = () => {
+      timerId = setTimeout(() => {
+        if (document.visibilityState === 'visible') {
+          refreshAllData();
+        }
+      }, delay);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const currentNow = Date.now();
+        if (latestTimestamp && !isNaN(latestTimestamp)) {
+          const nextCheckTime = latestTimestamp + checkIntervalMs + bufferMs;
+          if (currentNow >= nextCheckTime) {
+            refreshAllData();
+          }
+        }
+      }
+    };
+
+    scheduleFetch();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (timerId) clearTimeout(timerId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [
+    endpoint?.id,
+    endpoint?.lastCheckedAt,
+    endpoint?.checkIntervalSeconds,
+    endpoint?.isActive,
+    chartHistory,
+    refreshAllData
+  ]);
+
 
   const handleManualCheck = async () => {
     if (!id) return;
