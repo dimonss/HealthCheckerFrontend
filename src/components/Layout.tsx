@@ -6,11 +6,11 @@ import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { ThemeSwitcher } from './ui/ThemeSwitcher';
 import { TelegramModal } from './ui/TelegramModal';
 import { InviteModal } from './invites/InviteModal';
-import { Activity, LogOut, LayoutDashboard, Menu, X, Send, UserPlus } from 'lucide-react';
+import { Activity, LogOut, LayoutDashboard, Menu, X, Send, UserPlus, RefreshCw } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, activeProvider, availableProviders, switchProvider } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
@@ -90,8 +90,25 @@ export const Layout = () => {
             ) : (
               <div className="avatar">{initial}</div>
             )}
-            <span className="user-name">{displayName}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+              <span className="user-name">{displayName}</span>
+              {activeProvider && (
+                <span className="account-provider-tag">
+                  {activeProvider === 'google' ? '🔵 Google' : '✈️ Telegram'}
+                </span>
+              )}
+            </div>
           </div>
+          {availableProviders.length > 1 && (
+            <button
+              className="switch-account-btn"
+              onClick={() => switchProvider(activeProvider === 'google' ? 'telegram' : 'google')}
+              title={activeProvider === 'google' ? 'Переключить на Telegram' : 'Переключить на Google'}
+            >
+              <RefreshCw size={13} />
+              <span>{activeProvider === 'google' ? '✈️ На Telegram' : '🔵 На Google'}</span>
+            </button>
+          )}
           <button className="logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
             <span>{t('logout')}</span>

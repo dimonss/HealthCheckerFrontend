@@ -11,21 +11,87 @@ export const apiClient = axios.create({
   },
 });
 
+export type AuthProviderType = 'google' | 'telegram';
+export const APP_ID = 'health_checker';
+const APP_PROVIDER_KEY = `${APP_ID}_auth_provider`;
+
+export function hasTokensFor(provider: AuthProviderType): boolean {
+  return !!localStorage.getItem(`${provider}_accessToken`) && !!localStorage.getItem(`${provider}_refreshToken`);
+}
+
+export function getAvailableProviders(): AuthProviderType[] {
+  const list: AuthProviderType[] = [];
+  if (hasTokensFor('google')) list.push('google');
+  if (hasTokensFor('telegram')) list.push('telegram');
+  return list;
+}
+
+export function getActiveProvider(): AuthProviderType | null {
+  const hasGoogle = hasTokensFor('google');
+  const hasTelegram = hasTokensFor('telegram');
+
+  if (!hasGoogle && !hasTelegram) {
+    return null;
+  }
+  if (hasGoogle && !hasTelegram) {
+    return 'google';
+  }
+  if (hasTelegram && !hasGoogle) {
+    return 'telegram';
+  }
+
+  const stored = localStorage.getItem(APP_PROVIDER_KEY) as AuthProviderType | null;
+  if (stored === 'google' || stored === 'telegram') {
+    return stored;
+  }
+
+  return 'google';
+}
+
+export function setActiveProvider(provider: AuthProviderType) {
+  localStorage.setItem(APP_PROVIDER_KEY, provider);
+}
+
 export const getTokens = () => {
+  const provider = getActiveProvider();
+  if (!provider) {
+    return { accessToken: null, refreshToken: null, provider: null };
+  }
   return {
-    accessToken: localStorage.getItem('accessToken'),
-    refreshToken: localStorage.getItem('refreshToken')
+    accessToken: localStorage.getItem(`${provider}_accessToken`),
+    refreshToken: localStorage.getItem(`${provider}_refreshToken`),
+    provider,
   };
 };
 
-export const setTokens = (access: string, refresh: string) => {
-  localStorage.setItem('accessToken', access);
-  localStorage.setItem('refreshToken', refresh);
+export const setTokens = (access: string, refresh: string, provider?: AuthProviderType) => {
+  const targetProvider = provider || getActiveProvider() || 'google';
+  localStorage.setItem(`${targetProvider}_accessToken`, access);
+  localStorage.setItem(`${targetProvider}_refreshToken`, refresh);
+  localStorage.setItem(APP_PROVIDER_KEY, targetProvider);
 };
 
-export const clearTokens = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
+export const clearTokens = (onlyCurrent: boolean = true) => {
+  const current = getActiveProvider();
+  if (current && onlyCurrent) {
+    localStorage.removeItem(`${current}_accessToken`);
+    localStorage.removeItem(`${current}_refreshToken`);
+    localStorage.removeItem(`${current}_user`);
+    const remaining = getActiveProvider();
+    if (remaining) {
+      localStorage.setItem(APP_PROVIDER_KEY, remaining);
+    } else {
+      localStorage.removeItem(APP_PROVIDER_KEY);
+    }
+  } else {
+    localStorage.removeItem('google_accessToken');
+    localStorage.removeItem('google_refreshToken');
+    localStorage.removeItem('google_user');
+    localStorage.removeItem('telegram_accessToken');
+    localStorage.removeItem('telegram_refreshToken');
+    localStorage.removeItem('telegram_user');
+    localStorage.removeItem(APP_PROVIDER_KEY);
+  }
 };
 
 let onUnauthorizedCallback: (() => void) | null = null;
@@ -86,7 +152,7 @@ apiClient.interceptors.response.use(
           .catch((err) => Promise.reject(err));
       }
 
-      const { refreshToken } = getTokens();
+      const { refreshToken, provider } = getTokens();
       if (!refreshToken) {
         clearTokens();
         if (onUnauthorizedCallback) onUnauthorizedCallback();
@@ -101,7 +167,7 @@ apiClient.interceptors.response.use(
         const newRefreshToken = res.data.refreshToken || refreshToken;
 
         if (newAccessToken) {
-          setTokens(newAccessToken, newRefreshToken);
+          setTokens(newAccessToken, newRefreshToken, provider || undefined);
           processQueue(null, newAccessToken);
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

@@ -354,17 +354,40 @@
   }
 }
 
-@media (max-width: 480px) {
-  .header {
-    padding: 12px 14px;
-  }
-
-  .header-controls {
-    gap: 6px;
-  }
-
-  .page-content {
-    padding: 12px;
-  }
+.account-provider-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  margin-top: 2px;
 }
+
+.switch-account-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: var(--transition-fast);
+}
+
+.switch-account-btn:hover {
+  background: var(--hover-bg);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 

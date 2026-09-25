@@ -17,7 +17,7 @@ export const LoginPage = () => {
   const handleGoogleSuccess = async (response: any) => {
     try {
       const data = await loginGoogle(response.credential);
-      login(data.user);
+      login(data.user, 'google');
     } catch (e) {
       setError(t('googleError'));
     }
@@ -26,7 +26,7 @@ export const LoginPage = () => {
   const handleTelegramSuccess = async (user: any) => {
     try {
       const data = await loginTelegram(user);
-      login(data.user);
+      login(data.user, 'telegram');
     } catch (e) {
       setError(t('telegramError'));
     }

@@ -20,20 +20,30 @@ export interface AuthResponse {
 
 export const loginTelegram = async (data: any): Promise<AuthResponse> => {
   const res = await apiClient.post('/auth/telegram', data);
-  const { accessToken, refreshToken } = res.data;
-  setTokens(accessToken, refreshToken);
+  const { accessToken, refreshToken, user } = res.data;
+  setTokens(accessToken, refreshToken, 'telegram');
+  if (user) {
+    localStorage.setItem('telegram_user', JSON.stringify(user));
+  }
   return res.data;
 };
 
 export const loginGoogle = async (credential: string): Promise<AuthResponse> => {
   const res = await apiClient.post('/auth/google', { credential });
-  const { accessToken, refreshToken } = res.data;
-  setTokens(accessToken, refreshToken);
+  const { accessToken, refreshToken, user } = res.data;
+  setTokens(accessToken, refreshToken, 'google');
+  if (user) {
+    localStorage.setItem('google_user', JSON.stringify(user));
+  }
   return res.data;
 };
 
 export const getMe = async (): Promise<AuthUser> => {
   const res = await apiClient.get('/auth/me');
+  const provider = getTokens().provider;
+  if (provider && res.data) {
+    localStorage.setItem(`${provider}_user`, JSON.stringify(res.data));
+  }
   return res.data;
 };
 
