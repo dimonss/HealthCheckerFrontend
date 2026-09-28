@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './Modal.css';
@@ -15,7 +16,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content glass animate-fade-in" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
@@ -28,7 +29,8 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
