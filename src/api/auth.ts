@@ -1,4 +1,5 @@
-import { apiClient, getTokens, setTokens } from './client';
+import { apiClient, getTokens, setTokens, type AuthProviderType } from './client';
+
 
 export interface AuthUser {
   id: string;
@@ -47,12 +48,23 @@ export const getMe = async (): Promise<AuthUser> => {
   return res.data;
 };
 
-export const logoutApi = async (): Promise<void> => {
-  const { refreshToken } = getTokens();
-  if (refreshToken) {
-    await apiClient.post('/auth/logout', { refreshToken });
+export const logoutApi = async (provider?: AuthProviderType | 'all'): Promise<void> => {
+  if (provider === 'all') {
+    const gRefresh = localStorage.getItem('google_refreshToken');
+    const tgRefresh = localStorage.getItem('telegram_refreshToken');
+    if (gRefresh) await apiClient.post('/auth/logout', { refreshToken: gRefresh }).catch(() => {});
+    if (tgRefresh) await apiClient.post('/auth/logout', { refreshToken: tgRefresh }).catch(() => {});
+  } else if (provider) {
+    const refresh = localStorage.getItem(`${provider}_refreshToken`);
+    if (refresh) await apiClient.post('/auth/logout', { refreshToken: refresh }).catch(() => {});
+  } else {
+    const { refreshToken } = getTokens();
+    if (refreshToken) {
+      await apiClient.post('/auth/logout', { refreshToken }).catch(() => {});
+    }
   }
 };
+
 
 export const refreshAccessToken = async (refreshToken: string) => {
   const res = await apiClient.post('/auth/refresh', { refreshToken });

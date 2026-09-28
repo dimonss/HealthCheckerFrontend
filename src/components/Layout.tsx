@@ -1,28 +1,30 @@
 import { useState } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
+
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from './ui/LanguageSwitcher';
 import { ThemeSwitcher } from './ui/ThemeSwitcher';
 import { TelegramModal } from './ui/TelegramModal';
 import { InviteModal } from './invites/InviteModal';
+import { LogoutModal } from './ui/LogoutModal';
 import { Activity, LogOut, LayoutDashboard, Menu, X, Send, UserPlus, RefreshCw } from 'lucide-react';
 import './Layout.css';
 
 export const Layout = () => {
-  const { user, logout, activeProvider, availableProviders, switchProvider } = useAuth();
+  const { user, activeProvider, availableProviders, switchProvider } = useAuth();
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
     setIsMobileMenuOpen(false);
-    logout();
-    navigate('/');
+    setIsLogoutModalOpen(true);
   };
+
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -99,7 +101,7 @@ export const Layout = () => {
               )}
             </div>
           </div>
-          {availableProviders.length > 1 && (
+          {availableProviders.length > 1 ? (
             <button
               className="switch-account-btn"
               onClick={() => switchProvider(activeProvider === 'google' ? 'telegram' : 'google')}
@@ -108,8 +110,17 @@ export const Layout = () => {
               <RefreshCw size={13} />
               <span>{activeProvider === 'google' ? '✈️ На Telegram' : '🔵 На Google'}</span>
             </button>
+          ) : availableProviders.length === 1 && (
+            <button
+              className="switch-account-btn add-account-btn"
+              onClick={() => setIsLogoutModalOpen(true)}
+              title={activeProvider === 'google' ? 'Войти через Telegram' : 'Войти через Google'}
+            >
+              <UserPlus size={13} />
+              <span>{activeProvider === 'google' ? '+ ✈️ Войти в TG' : '+ 🔵 Войти в Google'}</span>
+            </button>
           )}
-          <button className="logout-btn" onClick={handleLogout}>
+          <button className="logout-btn" onClick={handleLogoutClick}>
             <LogOut size={18} />
             <span>{t('logout')}</span>
           </button>
@@ -146,8 +157,14 @@ export const Layout = () => {
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
       />
+
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+      />
     </div>
   );
 };
+
 
 

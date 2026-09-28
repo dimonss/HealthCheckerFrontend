@@ -1,0 +1,122 @@
+.logout-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: var(--text-color, #e2e8f0);
+}
+
+.sso-warning-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.sso-warning-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sso-warning-text h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fef3c7;
+}
+
+.sso-warning-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #fde68a;
+}
+
+.logout-accounts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.logout-accounts-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #94a3b8);
+  margin: 0;
+}
+
+.logout-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logout-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.logout-option-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.logout-option-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.logout-add-provider-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.logout-add-provider-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a5b4fc;
+}
+
+.logout-add-provider-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted, #94a3b8);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.logout-widget-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.logout-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

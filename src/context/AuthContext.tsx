@@ -8,7 +8,7 @@ interface AuthContextType {
   activeProvider: AuthProviderType | null;
   availableProviders: AuthProviderType[];
   login: (user: AuthUser, provider?: AuthProviderType) => void;
-  logout: () => void;
+  logout: (target?: AuthProviderType | 'all') => Promise<void>;
   switchProvider: (provider: AuthProviderType) => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -74,20 +74,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAvailableProviders(getAvailableProviders());
   };
 
-  const logout = async () => {
+  const logout = async (target?: AuthProviderType | 'all') => {
     try {
-      await logoutApi();
+      await logoutApi(target);
     } catch(e) {}
-    clearTokens();
+    clearTokens(target);
     const remaining = getActiveProvider();
     if (remaining) {
-      initAuth();
+      await initAuth();
     } else {
       setUser(null);
       setActiveProv(null);
       setAvailableProviders([]);
     }
   };
+
 
   const switchProvider = async (provider: AuthProviderType) => {
     setActiveProvider(provider);
